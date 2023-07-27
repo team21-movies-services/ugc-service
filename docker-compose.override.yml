@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  ugc-service-nginx:
+    build:
+      context: .
+      dockerfile: infra/nginx/Dockerfile
+    container_name: ugc-service-nginx
+    restart: unless-stopped
+    networks:
+      - ugc-service-network
+    depends_on:
+      - ugc-service-api
+
+  ugc-service-api:
+    container_name: ugc-service-api
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: infra/backend/Dockerfile
+    networks:
+      - ugc-service-network
+    depends_on:
+      ugc-service-redis:
+        condition: service_healthy
+    env_file:
+      - ./src/.env
+
+  ugc-service-redis:
+    container_name: ugc-service-redis
+    image: redis:7.0.8-alpine
+    restart: unless-stopped
+    networks:
+      - ugc-service-network
+    healthcheck:
+      test: redis-cli ping >/dev/null || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  ugc-service-network:
+    external:
+      name: ugc-service-network
