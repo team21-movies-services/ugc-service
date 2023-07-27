@@ -1,1 +1,1 @@
-from .service_dependencies import *  # noqa
+from .service_dependencies import *

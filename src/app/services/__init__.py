@@ -1,2 +1,2 @@
-from .auth import AuthServiceABC  # noqa
-from .status import StatusServiceABC  # noqa
+from .auth import AuthServiceABC
+from .status import StatusServiceABC
