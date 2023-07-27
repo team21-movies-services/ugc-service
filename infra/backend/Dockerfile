@@ -35,6 +35,7 @@ WORKDIR $APP_DIR
 
 # Копирования кода приложения
 COPY ./src/app $APP_DIR
+COPY ./src/gunicorn.conf.py $APP_DIR
 
 EXPOSE 8000
 
