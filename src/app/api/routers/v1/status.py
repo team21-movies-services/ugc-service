@@ -16,6 +16,6 @@ logger = logging.getLogger().getChild('status-router')
     response_model=StatusResponse,
     status_code=status.HTTP_200_OK,
 )
-async def _get_api_status(role_service: StatusServiceABC = Depends()) -> StatusResponse:
+async def _get_api_status(status_service: StatusServiceABC = Depends()) -> StatusResponse:
     logger.debug('Get api status')
-    return await role_service.get_api_status()
+    return await status_service.get_api_status()
