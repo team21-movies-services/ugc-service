@@ -40,6 +40,6 @@ def gen_data(batch_size: int, batch_amount: int) -> Generator[list[dict], None, 
                 "user_id": user_id,
                 "film_id": film_id,
                 "viewed_frame": i,
-                "created_at": datetime.now()
+                "event_time": datetime.now()
             } for i in range(batch_size)
         ]
