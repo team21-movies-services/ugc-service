@@ -20,6 +20,6 @@ CREATE TABLE IF NOT EXISTS default.views (
   viewed_frame UInt16,
   event_time DATETIME) ENGINE Distributed (
   'company_cluster',
-  '{database}',
+  'shard',
   views,
   rand ());
