@@ -24,6 +24,12 @@ services:
     depends_on:
       ugc-service-redis:
         condition: service_healthy
+      ugc-service-kafka-broker-1:
+        condition: service_healthy
+      ugc-service-kafka-broker-2:
+        condition: service_healthy
+      ugc-service-kafka-broker-3:
+        condition: service_healthy
     env_file:
       - ./src/.env
 

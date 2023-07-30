@@ -27,6 +27,7 @@ orjson = "^3.9.2"
 uvicorn = "^0.23.1"
 redis = "^4.6.0"
 pydantic-settings = "^2.0.2"
+aiokafka = "^0.8.1"
 
 
 [tool.poetry.group.dev.dependencies]

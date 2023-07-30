@@ -10,6 +10,11 @@ class RedisConfig(BaseSettings):
     host: str = Field(default='127.0.0.1', alias='REDIS_HOST')
 
 
+# Настройки Kafka
+class KafkaConfig(BaseSettings):
+    host: str = Field(default='localhost:9092,localhost:9093,localhost:9094', alias='KAFKA_HOST')
+
+
 # Название проекта. Используется в Swagger-документации
 class ProjectConfig(BaseSettings):
     name: str = Field(default='auth_api', alias='PROJECT_NAME')
@@ -20,6 +25,7 @@ class ProjectConfig(BaseSettings):
 class Settings(BaseSettings):
     project: ProjectConfig = ProjectConfig()
     redis: RedisConfig = RedisConfig()
+    kafka: KafkaConfig = KafkaConfig()
 
 
 settings = Settings()

@@ -30,30 +30,30 @@ uninstall: ## uninstall all services
 
 .PHONY: up-local
 up-local: create_network ## up local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.override.yml up --build
+	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml up --build
 
 .PHONY: down-local
 down-local: ## down local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.override.yml down
+	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml down
 
 .PHONY: build-local
 build-local: ## build local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.override.yml build --force-rm
+	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml build --force-rm
 
 .PHONY: build-force-local
 build-force-local: ## build force services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.override.yml build --no-cache
+	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml build --no-cache
 
 .PHONY: logs-local
 logs-local: ## logs local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.override.yml logs -f
+	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml logs -f
 
 .PHONY: restart-local
 restart-local: down-local up-local ## logs local services
 
 .PHONY: uninstall-local
 uninstall-local: ## uninstall local services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.local.yml down --remove-orphans --volumes
+	@docker-compose -f docker-compose.override.yml -f docker-compose.local.yml -f docker-compose.kafka.yml down --remove-orphans --volumes
 
 # local end
 
@@ -61,3 +61,15 @@ uninstall-local: ## uninstall local services
 help: ## Help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -d | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+# kafka start
+
+.PHONY: up-kafka
+up-kafka: create_network ## up local services
+	@docker-compose -f docker-compose.kafka.yml up --build
+
+
+.PHONY: uninstall-kafka
+uninstall-kafka: ## uninstall all services
+	@docker-compose -f docker-compose.kafka.yml down --remove-orphans --volumes
+
+# kafka end
