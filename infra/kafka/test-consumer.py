@@ -1,6 +1,6 @@
 import asyncio
 
-from aiokafka import AIOKafkaConsumer
+from aiokafka import AIOKafkaConsumer, TopicPartition
 
 
 async def consume():
@@ -8,17 +8,23 @@ async def consume():
         'views',
         bootstrap_servers='localhost:9092,localhost:9093,localhost:9094',
         group_id="test-consumer",
-        auto_offset_reset='earliest',
+        enable_auto_commit=False,
+        auto_offset_reset='latest',
     )
-    # Get cluster layout and join group `my-group`
     await consumer.start()
     try:
-        # Consume messages
         async for msg in consumer:
             print("consumed: ", msg.topic, msg.partition, msg.offset, msg.key, msg.value, msg.timestamp)  # noqa
+            await _manual_commit(msg.topic, msg.partition, msg.offset, consumer)
     finally:
-        # Will leave consumer group; perform autocommit if enabled.
         await consumer.stop()
+
+
+async def _manual_commit(topic: str, partition: int, offset: int, consumer: AIOKafkaConsumer) -> None:
+    tp = TopicPartition(topic, partition)
+    offset = offset + 1
+    await consumer.commit({tp: offset})
+    print(f"commited: tp - {tp} offset - {offset}")  # noqa
 
 
 asyncio.run(consume())

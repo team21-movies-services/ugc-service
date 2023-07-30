@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from aiokafka import AIOKafkaProducer
 
@@ -6,13 +7,15 @@ from aiokafka import AIOKafkaProducer
 async def send_one():
     producer = AIOKafkaProducer(
         bootstrap_servers='localhost:9092,localhost:9093,localhost:9094',
+        max_batch_size=163840,
     )
     await producer.start()
     try:
-        # Produce message
-        await producer.send_and_wait("views", b"Super message", b"hi")
+        for _ in range(10):
+            await producer.send("views", b"Super message", b"hi")
+            time.sleep(1)
     finally:
-        # Wait for all pending messages to be delivered or expire.
+        await producer.send("views", b"Goodbye message", b"bye")
         await producer.stop()
 
 
