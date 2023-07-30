@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.8'
 
 services:
   ugc-service-clickhouse-zookeeper:
@@ -24,6 +24,11 @@ services:
       - "9000:9000"
     depends_on:
       - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   ugc-service-clickhouse-node2:
     build:
@@ -38,6 +43,11 @@ services:
       - ugc-service-network
     depends_on:
       - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   ugc-service-clickhouse-node3:
     build:
@@ -52,6 +62,11 @@ services:
       - ugc-service-network
     depends_on:
       - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   ugc-service-clickhouse-node4:
     build:
@@ -66,6 +81,11 @@ services:
       - ugc-service-network
     depends_on:
       - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 
 networks:
