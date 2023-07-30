@@ -1,11 +1,12 @@
 CREATE DATABASE IF NOT EXISTS shard;
 
 CREATE TABLE IF NOT EXISTS shard.views (
-  id UUID,
+  id UUID DEFAULT generateUUIDv4(),
   film_id UUID,
   user_id UUID,
   viewed_frame UInt16,
-  event_time DATETIME) ENGINE ReplicatedMergeTree (
+  event_time DateTime('UTC'))
+    ENGINE ReplicatedMergeTree (
   '/clickhouse/tables/{shard}',
   '{replica}'
 )
@@ -14,11 +15,11 @@ ORDER BY
   event_time;
 
 CREATE TABLE IF NOT EXISTS default.views (
-  id UUID,
+  id UUID DEFAULT generateUUIDv4(),
   film_id UUID,
   user_id UUID,
   viewed_frame UInt16,
-  event_time DATETIME) ENGINE Distributed (
+  event_time DateTime('UTC')) ENGINE Distributed (
   'company_cluster',
   'shard',
   views,

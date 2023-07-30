@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 from functools import wraps
 from time import time
 from typing import Generator
@@ -37,11 +36,11 @@ def gen_data(batch_size: int, batch_amount: int) -> Generator[list[dict], None, 
         film_id = uuid.uuid4()
         yield [
             {
-                "id": str(uuid.uuid4()),
+                # "id": str(uuid.uuid4()),
                 "user_id": str(user_id),
                 "film_id": str(film_id),
                 "viewed_frame": i,
-                "event_time": datetime.now(),
+                "event_time": int(time()),
             }
             for i in range(batch_size)
         ]
