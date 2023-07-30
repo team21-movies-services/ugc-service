@@ -1,14 +1,14 @@
 version: '3.5'
 
 services:
-  zookeeper:
+  ugc-service-clickhouse-zookeeper:
     image: zookeeper
     container_name: clickhouse-zookeeper
     hostname: zookeeper
     networks:
       - ugc-service-network
 
-  clickhouse-node1:
+  ugc-service-clickhouse-node1:
     build:
       context: infra/clickhouse/.
       args:
@@ -23,9 +23,9 @@ services:
       - "8123:8123"
       - "9000:9000"
     depends_on:
-      - zookeeper
+      - ugc-service-clickhouse-zookeeper
 
-  clickhouse-node2:
+  ugc-service-clickhouse-node2:
     build:
       context: infra/clickhouse/.
       args:
@@ -37,9 +37,9 @@ services:
     networks:
       - ugc-service-network
     depends_on:
-      - zookeeper
+      - ugc-service-clickhouse-zookeeper
 
-  clickhouse-node3:
+  ugc-service-clickhouse-node3:
     build:
       context: infra/clickhouse/.
       args:
@@ -51,9 +51,9 @@ services:
     networks:
       - ugc-service-network
     depends_on:
-      - zookeeper
+      - ugc-service-clickhouse-zookeeper
 
-  clickhouse-node4:
+  ugc-service-clickhouse-node4:
     build:
       context: infra/clickhouse/.
       args:
@@ -65,7 +65,7 @@ services:
     networks:
       - ugc-service-network
     depends_on:
-      - zookeeper
+      - ugc-service-clickhouse-zookeeper
 
 
 networks:

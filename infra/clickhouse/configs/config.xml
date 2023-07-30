@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <clickhouse>
     <logger>
-        <level>debug</level>
+        <level>warning</level>
         <console>true</console>
         <log remove="remove"/>
         <errorlog remove="remove"/>
@@ -32,14 +32,14 @@
         <company_cluster>
             <shard>
                 <replica>
-                    <host>clickhouse-node1</host>
+                    <host>ugc-service-clickhouse-node1</host>
                     <default_database>shard</default_database>
                     <user from_env="CLICKHOUSE_USER" />
                     <password from_env="CLICKHOUSE_PASSWORD" />
                     <port>9000</port>
                 </replica>
                 <replica>
-                    <host>clickhouse-node2</host>
+                    <host>ugc-service-clickhouse-node2</host>
                     <default_database>shard</default_database>
                     <user from_env="CLICKHOUSE_USER" />
                     <password from_env="CLICKHOUSE_PASSWORD" />
@@ -48,14 +48,14 @@
             </shard>
             <shard>
                 <replica>
-                    <host>clickhouse-node3</host>
+                    <host>ugc-service-clickhouse-node3</host>
                     <default_database>shard</default_database>
                     <user from_env="CLICKHOUSE_USER" />
                     <password from_env="CLICKHOUSE_PASSWORD" />
                     <port>9000</port>
                 </replica>
                 <replica>
-                    <host>clickhouse-node4</host>
+                    <host>ugc-service-clickhouse-node4</host>
                     <default_database>shard</default_database>
                     <user from_env="CLICKHOUSE_USER" />
                     <password from_env="CLICKHOUSE_PASSWORD" />
@@ -67,7 +67,7 @@
 
     <zookeeper>
         <node index="1">
-            <host>zookeeper</host>
+            <host>ugc-service-clickhouse-zookeeper</host>
             <port>2181</port>
         </node>
     </zookeeper>
