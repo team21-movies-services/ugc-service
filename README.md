@@ -43,3 +43,13 @@ make up-local
 ```
 
 4) go to `http://localhost:8000/docs`
+
+
+# Init kafka
+
+1) build and up docker local
+```bash
+make up-kafka
+```
+
+2) go to `http://localhost:8090`
