@@ -1,9 +1,8 @@
 import uuid
 from datetime import datetime
 from functools import wraps
-from typing import Generator
-
 from time import time
+from typing import Generator
 
 
 def timer_dec(func):
@@ -27,19 +26,22 @@ def gen_data(batch_size: int, batch_amount: int) -> Generator[list[dict], None, 
         :param batch_amount: Количество таких пачек
     Returns:
         Генератор который возвращает списки словарей в формате:
-                - "user_id" (UUID4):
-                - "film_id" (UUID4):
+                - "user_id" (str):
+                - "film_id" (str):
                 - "viewed_frame" (int): Просмотренный отрезок фильма(например секунда)
                 - "created_at" (datetime): Время создания записи о просмотре (текущее время).
     """
+
     for _ in range(batch_amount):
         user_id = uuid.uuid4()
         film_id = uuid.uuid4()
         yield [
             {
-                "user_id": user_id,
-                "film_id": film_id,
+                "id": str(uuid.uuid4()),
+                "user_id": str(user_id),
+                "film_id": str(film_id),
                 "viewed_frame": i,
-                "event_time": datetime.now()
-            } for i in range(batch_size)
+                "event_time": datetime.now(),
+            }
+            for i in range(batch_size)
         ]
