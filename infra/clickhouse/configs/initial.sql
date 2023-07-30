@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS shard ON CLUSTER company_cluster;
+CREATE DATABASE IF NOT EXISTS shard;
 
-CREATE TABLE IF NOT EXISTS shard.views ON CLUSTER company_cluster (
+CREATE TABLE IF NOT EXISTS shard.views (
   id UUID,
   film_id UUID,
   user_id UUID,

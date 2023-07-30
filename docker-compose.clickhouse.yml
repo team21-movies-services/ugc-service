@@ -3,8 +3,10 @@ version: '3.5'
 services:
   zookeeper:
     image: zookeeper
-    container_name: zookeeper
+    container_name: clickhouse-zookeeper
     hostname: zookeeper
+    networks:
+      - ugc-service-network
 
   clickhouse-node1:
     build:
@@ -13,6 +15,8 @@ services:
         - NODE=node1
     container_name: clickhouse-node1
     hostname: clickhouse-node1
+    networks:
+      - ugc-service-network
     ports:
       - "8123:8123"
       - "9000:9000"
@@ -26,6 +30,8 @@ services:
         - NODE=node2
     container_name: clickhouse-node2
     hostname: clickhouse-node2
+    networks:
+      - ugc-service-network
     depends_on:
       - zookeeper
 
@@ -36,6 +42,8 @@ services:
         - NODE=node3
     container_name: clickhouse-node3
     hostname: clickhouse-node3
+    networks:
+      - ugc-service-network
     depends_on:
       - zookeeper
 
@@ -46,5 +54,13 @@ services:
         - NODE=node4
     container_name: clickhouse-node4
     hostname: clickhouse-node4
+    networks:
+      - ugc-service-network
     depends_on:
       - zookeeper
+
+
+networks:
+  ugc-service-network:
+    external:
+      name: ugc-service-network
