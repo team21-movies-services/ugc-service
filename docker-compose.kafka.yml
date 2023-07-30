@@ -9,7 +9,7 @@ services:
     container_name: ugc-service-kafka-zookeeper
     restart: always
     environment:
-      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_CLIENT_PORT: ${KAFKA_ZOOKEEPER_CLIENT_PORT}
       ZOOKEEPER_TICK_TIME: 2000
     networks:
       - ugc-service-network
@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${KAFKA_ZOOKEEPER_CLIENT_PORT}
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ugc-service-kafka-broker-1:19092,PLAINTEXT_HOST://localhost:${KAFKA_BROKER_1_PORT}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
@@ -53,7 +53,7 @@ services:
     restart: always
     environment:
       KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${KAFKA_ZOOKEEPER_CLIENT_PORT}
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ugc-service-kafka-broker-2:19093,PLAINTEXT_HOST://localhost:${KAFKA_BROKER_2_PORT}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
@@ -86,7 +86,7 @@ services:
     restart: always
     environment:
       KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_ZOOKEEPER_CONNECT: ugc-service-kafka-zookeeper:${KAFKA_ZOOKEEPER_CLIENT_PORT}
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ugc-service-kafka-broker-3:19094,PLAINTEXT_HOST://localhost:${KAFKA_BROKER_3_PORT}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
