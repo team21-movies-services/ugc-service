@@ -73,3 +73,16 @@ uninstall-kafka: ## uninstall all services
 	@docker-compose -f docker-compose.kafka.yml down --remove-orphans --volumes
 
 # kafka end
+
+# clickhouse start
+
+.PHONY: up-ch
+up-ch: create_network
+	@docker-compose -f docker-compose.clickhouse.yml up --build -d
+
+
+.PHONY: uninstall-ch
+uninstall-ch:
+	@docker-compose -f docker-compose.clickhouse.yml down --remove-orphans --volumes
+
+# clickhouse end

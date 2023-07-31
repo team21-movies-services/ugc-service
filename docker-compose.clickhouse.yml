@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  ugc-service-clickhouse-zookeeper:
+    image: zookeeper
+    container_name: clickhouse-zookeeper
+    hostname: zookeeper
+    networks:
+      - ugc-service-network
+
+  ugc-service-clickhouse-node1:
+    build:
+      context: infra/clickhouse/.
+      args:
+        - NODE=node1
+    container_name: clickhouse-node1
+    hostname: clickhouse-node1
+    env_file:
+      - ".env"
+    networks:
+      - ugc-service-network
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    depends_on:
+      - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ugc-service-clickhouse-node2:
+    build:
+      context: infra/clickhouse/.
+      args:
+        - NODE=node2
+    container_name: clickhouse-node2
+    hostname: clickhouse-node2
+    env_file:
+      - ".env"
+    networks:
+      - ugc-service-network
+    depends_on:
+      - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ugc-service-clickhouse-node3:
+    build:
+      context: infra/clickhouse/.
+      args:
+        - NODE=node3
+    container_name: clickhouse-node3
+    hostname: clickhouse-node3
+    env_file:
+      - ".env"
+    networks:
+      - ugc-service-network
+    depends_on:
+      - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ugc-service-clickhouse-node4:
+    build:
+      context: infra/clickhouse/.
+      args:
+        - NODE=node4
+    container_name: clickhouse-node4
+    hostname: clickhouse-node4
+    env_file:
+      - ".env"
+    networks:
+      - ugc-service-network
+    depends_on:
+      - ugc-service-clickhouse-zookeeper
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+networks:
+  ugc-service-network:
+    external:
+      name: ugc-service-network
