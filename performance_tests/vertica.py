@@ -21,7 +21,7 @@ def create_table(connection: Connection) -> None:
                 user_id VARCHAR(256) NOT NULL,
                 film_id VARCHAR(256) NOT NULL,
                 viewed_frame INTEGER NOT NULL,
-                created_at INTEGER NOT NULL
+                event_time INTEGER NOT NULL
             );
         """,
     )
@@ -41,8 +41,8 @@ def write_test(data: Iterable[list[dict[str, Any]]], connection: Connection) -> 
     for batch in tqdm(data, total=BATCH_AMOUNT):
         cursor.executemany(
             f"""
-                INSERT INTO {TABLE_NAME}(user_id, film_id, viewed_frame, created_at)
-                    VALUES (:user_id, :film_id, :viewed_frame, :created_at); COMMIT;
+                INSERT INTO {TABLE_NAME}(user_id, film_id, viewed_frame, event_time)
+                    VALUES (:user_id, :film_id, :viewed_frame, :event_time); COMMIT;
             """,
             batch,
         )

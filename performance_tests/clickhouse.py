@@ -15,7 +15,7 @@ client = Client(host='localhost', password='123', database='default')
 @timer_dec
 def write_test(data: Iterable) -> None:
     for batch in tqdm(data, total=BATCH_AMOUNT):
-        client.execute(f'INSERT INTO {TABLE_NAME} (user_id, film_id, viewed_frame, created_at) VALUES', batch)
+        client.execute(f'INSERT INTO {TABLE_NAME} (user_id, film_id, viewed_frame, event_time) VALUES', batch)
 
 
 @timer_dec
