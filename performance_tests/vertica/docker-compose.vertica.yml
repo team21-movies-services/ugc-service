@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+
+  perfomance-test-vertica-node-1:
+    container_name: perfomance-test-vertica-node-1
+    build:
+      context: .
+    environment:
+      VERTICA_MEMDEBUG: 2 # fix for ARM64
+    platform: linux/amd64
+    deploy:
+      mode: global
+    volumes:
+      - perfomance-test-vertica-node-1:/opt/vertica
+    ports:
+      - "5433:5433"
+      - "5444:5444"
+
+volumes:
+  perfomance-test-vertica-node-1:
+    driver: local

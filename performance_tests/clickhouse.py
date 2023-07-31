@@ -2,6 +2,7 @@ from typing import Iterable
 
 from clickhouse_driver import Client
 from tqdm import tqdm
+
 from utils import gen_data, timer_dec
 
 BATCH_SIZE: int = 1000

@@ -28,7 +28,7 @@ def gen_data(batch_size: int, batch_amount: int) -> Generator[list[dict], None, 
                 - "user_id" (str):
                 - "film_id" (str):
                 - "viewed_frame" (int): Просмотренный отрезок фильма(например секунда)
-                - "created_at" (datetime): Время создания записи о просмотре (текущее время).
+                - "event_time" (int): Время создания записи о просмотре (текущее время).
     """
 
     for _ in range(batch_amount):

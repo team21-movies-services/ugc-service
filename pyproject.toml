@@ -5,7 +5,7 @@ description = "User-Generated Content service"
 authors = ["Team 5 <Your address email (you@example.com)>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "ugc-service"}]
+packages = [{ include = "ugc-service" }]
 
 [tool.black]
 line-length = 120
@@ -13,7 +13,7 @@ skip-string-normalization = true
 
 [tool.isort]
 profile = "black"
-src_paths = ["src/app"]
+src_paths = ["src/app", "performance_tests/"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -22,7 +22,7 @@ pydantic = "^2.1.1"
 python-dotenv = "^1.0.0"
 httpx = "^0.24.1"
 gunicorn = "^21.2.0"
-pyjwt = {extras = ["crypto"], version = "^2.8.0"}
+pyjwt = { extras = ["crypto"], version = "^2.8.0" }
 orjson = "^3.9.2"
 uvicorn = "^0.23.1"
 redis = "^4.6.0"
@@ -45,6 +45,12 @@ flake8-pytest-style = "^1.7.2"
 black = "^23.7.0"
 isort = "^5.12.0"
 types-redis = "^4.6.0.3"
+
+
+[tool.poetry.group.performance_testing.dependencies]
+tqdm = "^4.65.0"
+clickhouse-driver = "^0.2.6"
+vertica-python = "^1.3.2"
 
 [build-system]
 requires = ["poetry-core"]

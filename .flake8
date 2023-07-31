@@ -17,7 +17,7 @@ per-file-ignores =
     performance_tests/utils.py:
         # prints ignore
         T201
-    performance_tests/clickhouse.py:
+    performance_tests/*:
         # hardcoded password
         S106
         # possible sql injection

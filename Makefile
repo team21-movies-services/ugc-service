@@ -86,3 +86,16 @@ uninstall-ch:
 	@docker-compose -f docker-compose.clickhouse.yml down --remove-orphans --volumes
 
 # clickhouse end
+
+# vertica start
+
+.PHONY: up-vertica
+up-vertica: create_network
+	@docker-compose -f performance_tests/vertica/docker-compose.vertica.yml up --build
+
+
+.PHONY: uninstall-vertica
+uninstall-vertica:
+	@docker-compose -f  performance_tests/vertica/docker-compose.vertica.yml down --remove-orphans --volumes
+
+# vertica end
