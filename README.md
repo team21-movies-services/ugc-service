@@ -53,3 +53,27 @@ make up-kafka
 ```
 
 2) go to `http://localhost:8090`
+
+
+# Perfomance tests
+
+install dependencies
+
+```bash
+poetry install --only performance_testing   
+```
+
+## Vertica
+
+1) run vertica
+
+```bash
+make up-vertica
+```
+2) wait until vertica is running
+
+3) Run test script
+
+```bash
+poetry run python3 performance_tests/vertica.py 
+```
