@@ -104,11 +104,11 @@ uninstall-vertica:
 
 .PHONY: up-mongo
 up-mongo: create_network
-	@docker-compose -f performance_tests/mongo/docker-compose.mongo.yml up --build -d
+	@docker-compose -p ugc-service-mongo-test -f performance_tests/mongo/docker-compose.mongo.yml up --build -d
 
 
 .PHONY: uninstall-mongo
 uninstall-mongo:
-	@docker-compose -f  performance_tests/mongo/docker-compose.mongo.yml down --remove-orphans --volumes
+	@docker-compose -p ugc-service-mongo-test -f  performance_tests/mongo/docker-compose.mongo.yml down --remove-orphans --volumes
 
 # mongo end

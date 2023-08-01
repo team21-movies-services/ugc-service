@@ -2,14 +2,12 @@ version: "3.9"
 services:
 
   ugc-service-test-node-1:
-    image: mongo:latest
+    image: mongo:7.0.0-rc8
     container_name: ugc-service-test-node-1
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: test_db
-    platform: linux/amd64
     networks:
       - ugc-service-network
     healthcheck:
@@ -40,5 +38,5 @@ services:
 networks:
   ugc-service-network:
     driver: bridge
-    external:
-      name: ugc-service-network
+    external: true
+    name: ugc-service-network
