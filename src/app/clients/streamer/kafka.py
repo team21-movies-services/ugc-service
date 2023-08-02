@@ -9,6 +9,6 @@ class KafkaService(StreamerServiceABC):
 
     async def send_message(self, topic: str, key: str, value: int) -> None:
         # Отправка данных в Apache Kafka
-        await self.producer.send(topic=topic,
-                                 key=bytes(key, encoding='utf-8'),
-                                 value=bytes(str(value), encoding='utf-8'))
+        await self.producer.send(
+            topic=topic, key=bytes(key, encoding='utf-8'), value=bytes(str(value), encoding='utf-8')
+        )
