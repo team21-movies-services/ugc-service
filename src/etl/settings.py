@@ -1,17 +1,23 @@
-from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 # Настройки Kafka
 class KafkaConfig(BaseSettings):
-    host: str = Field(default='localhost:9092,localhost:9093,localhost:9094', alias='KAFKA_HOST')
+    model_config = SettingsConfigDict(env_prefix='KAFKA_', case_sensitive=False)
+
+    host: str = 'localhost:9092,localhost:9093,localhost:9094'
 
 
 # Настройки ClickHouse
 class ClickHouseConfig(BaseSettings):
-    host: str = Field(default='localhost:8123', alias='CLICKHOUSE_HOST')
-    user: str = Field(default='default', alias='CLICKHOUSE_USER')
-    password: str = Field(default='1234', alias='CLICKHOUSE_PASSWORD')
+    model_config = SettingsConfigDict(env_prefix='CLICKHOUSE_', case_sensitive=False)
+
+    password: str = "1234"
+    host: str = 'localhost'
+    port: str = 'localhost'
+    user: str = 'default'
+    database: str = 'default'
+    connect_timeout: int = 1000
 
 
 class Settings(BaseSettings):

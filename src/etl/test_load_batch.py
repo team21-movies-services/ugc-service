@@ -29,14 +29,14 @@ async def send_many(num):
             partitions = await producer.partitions_for(topic)
             partition = random.choice(tuple(partitions))  # noqa
             await producer.send_batch(batch, topic, partition=partition)
-            logger.debug("%d messages sent to partition %d" % (batch.record_count(), partition))
+            logger.error("%d messages sent to partition %d" % (batch.record_count(), partition))
             batch = producer.create_batch()
             continue
         i += 1
     partitions = await producer.partitions_for(topic)
     partition = random.choice(tuple(partitions))  # noqa
     await producer.send_batch(batch, topic, partition=partition)
-    logger.debug("%d messages sent to partition %d" % (batch.record_count(), partition))
+    logger.error("%d messages sent to partition %d" % (batch.record_count(), partition))
     await producer.stop()
 
 

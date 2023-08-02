@@ -1,9 +1,12 @@
 import asyncio
+import logging
 import random
 import uuid
 
 from aiokafka import AIOKafkaProducer
 from settings import settings
+
+logger = logging.getLogger(__name__)
 
 
 async def send_one():
@@ -20,7 +23,8 @@ async def send_one():
             viewed_frame += 1
             value = f"{viewed_frame}".encode()
             partition = random.choice(range(1, 4))  # noqa
-            await producer.send_and_wait("views", value, key, partition)
+            response = await producer.send_and_wait("views", value, key, partition)
+            logger.error(response)
             await asyncio.sleep(0.5)
         except Exception:
             await producer.stop()
