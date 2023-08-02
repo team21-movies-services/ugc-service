@@ -1,4 +1,5 @@
 from aiokafka import AIOKafkaProducer
+
 from clients.streamer.base import StreamerServiceABC
 
 

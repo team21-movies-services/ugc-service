@@ -25,5 +25,6 @@ class KafkaProvider(BaseProvider):
 
     async def shutdown(self):
         """FastAPI shutdown event"""
+
         if self.kafka_producer:
             await self.kafka_producer.stop()

@@ -23,8 +23,6 @@ def setup_providers(app: FastAPI, settings: Settings):
     http_client.register_events()
     logger.info(f"Setup Http Provider. {http_client}")
 
-    kafka_provider = KafkaProvider(
-        app=app,
-        host=settings.kafka.host)
+    kafka_provider = KafkaProvider(app=app, host=settings.kafka.host)
     kafka_provider.register_events()
     logger.info(f"Setup Kafka Provider. hostL: {settings.kafka.host}")

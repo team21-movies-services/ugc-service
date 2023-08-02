@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
-from clients.streamer.kafka import KafkaService
 from pydantic import UUID4
+
+from clients.streamer.kafka import KafkaService
 from schemas.response.views import SaveViewDataResponse
 
 

@@ -1,11 +1,12 @@
 import logging
 
-from dependencies.auth import get_auth_data
 from fastapi import APIRouter, Depends, Query
 from pydantic import UUID4
+
+from dependencies.auth import get_auth_data
 from schemas.domain.auth import AuthData
-from services.views import ViewsServiceABC
 from schemas.response.views import SaveViewDataResponse
+from services.views import ViewsServiceABC
 
 router = APIRouter(prefix='/views', tags=['Views'])
 
