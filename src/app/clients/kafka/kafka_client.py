@@ -6,16 +6,19 @@ class KafkaService:
         self.producer = None
 
     async def start(self):
+        servers = """ugc-service-kafka-broker-1:19092,
+        ugc-service-kafka-broker-2:19093,
+        ugc-service-kafka-broker-3:19094"""
         self.producer = AIOKafkaProducer(
-            bootstrap_servers='localhost:9092,localhost:9093,localhost:9094',
+            bootstrap_servers=servers,
             max_batch_size=163840)
 
         await self.producer.start()
 
     async def send_message(self, topic: str, key: str, value: int):
         await self.producer.send(topic=topic,
-                                 key=key,
-                                 value=value)
+                                 key=bytes(key, encoding='utf-8'),
+                                 value=bytes(str(value), encoding='utf-8'))
 
     async def close(self):
         if self.producer:
