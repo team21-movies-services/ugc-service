@@ -14,7 +14,7 @@ class ClickHouseConfig(BaseSettings):
 
     password: str = "1234"
     host: str = 'localhost'
-    port: str = 'localhost'
+    port: str = "8123"
     user: str = 'default'
     database: str = 'default'
     connect_timeout: int = 1000

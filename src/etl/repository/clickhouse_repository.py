@@ -1,5 +1,4 @@
 import logging
-from time import time
 from typing import AsyncGenerator
 
 from clickhouse_driver import Client
@@ -20,6 +19,7 @@ class ClickHouseRepository:
     def get_client(click_house_cfg: ClickHouseConfig):
         clickhouse_connection_options = {
             'host': click_house_cfg.host,
+            # FIXME: порт странно прокидывается..
             # 'port': click_house_cfg.port,
             'database': click_house_cfg.database,
             'user': click_house_cfg.user,
@@ -31,7 +31,7 @@ class ClickHouseRepository:
     async def save_movie_viewed(self, movies_viewed_data: AsyncGenerator[MovieViewed, None]):
         stmt = "INSERT INTO views (user_id, film_id, viewed_frame, event_time) VALUES"
         async for movie in movies_viewed_data:
-            data = (movie.user_id, movie.film_id, movie.viewed_frame, int(time()))
+            data = movie.transform_for_clickhouse()
             logger.info("Try load data to click house %s", data)
             result = self._repository.execute(stmt, [data])
             logger.info("Save result %d", result)
