@@ -25,7 +25,9 @@ async def save_movie_view(
     view_service: ViewsServiceABC = Depends(),
 ) -> SaveViewDataResponse:
     movie_view_data = await view_service.save_view_data(
-        movie_id=movie_id, user_id=auth_data.user_id, viewed_frame=viewed_frame
+        movie_id=movie_id,
+        user_id=auth_data.user_id,
+        viewed_frame=viewed_frame,
     )
 
     return movie_view_data
