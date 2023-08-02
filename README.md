@@ -77,3 +77,18 @@ make up-vertica
 ```bash
 poetry run python3 performance_tests/vertica.py 
 ```
+
+## Mongo
+
+1) run mongo
+
+```bash
+make up-mongo
+```
+2) wait until mongo is running
+
+3) Run test script
+
+```bash
+poetry run python3 performance_tests/mongo.py 
+```

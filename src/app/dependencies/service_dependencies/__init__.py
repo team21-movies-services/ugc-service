@@ -1,2 +1,3 @@
 from .auth_service_factory import create_auth_service
 from .status_service_factory import create_status_service
+from .views_service_faсtory import create_views_service
