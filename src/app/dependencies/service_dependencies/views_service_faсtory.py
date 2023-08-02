@@ -11,6 +11,6 @@ from services.views import ViewsService, ViewsServiceABC
 def create_views_service(
     kafka_producer: AIOKafkaProducer = Depends(get_kafka_producer),
 ) -> ViewsService:
-    kafka_service = KafkaService(kafka_producer)
+    event_streamer_service = KafkaService(kafka_producer)
 
-    return ViewsService(kafka_service)
+    return ViewsService(event_streamer_service)

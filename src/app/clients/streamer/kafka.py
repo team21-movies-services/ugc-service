@@ -1,9 +1,9 @@
 from aiokafka import AIOKafkaProducer
 
-from clients.streamer.base import StreamerServiceABC
+from clients.streamer.base import EventStreamerServiceABC
 
 
-class KafkaService(StreamerServiceABC):
+class KafkaService(EventStreamerServiceABC):
     def __init__(self, producer: AIOKafkaProducer) -> None:
         self.producer = producer
 
