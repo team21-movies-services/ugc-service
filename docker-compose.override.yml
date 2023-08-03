@@ -33,6 +33,24 @@ services:
     env_file:
       - ./src/.env
 
+  ugc-service-etl:
+    container_name: ugc-service-etl
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: infra/etl/Dockerfile
+    networks:
+      - ugc-service-network
+    depends_on:
+      ugc-service-kafka-broker-1:
+        condition: service_healthy
+      ugc-service-kafka-broker-2:
+        condition: service_healthy
+      ugc-service-kafka-broker-3:
+        condition: service_healthy
+    env_file:
+      - ./src/.env
+
   ugc-service-redis:
     container_name: ugc-service-redis
     image: redis:7.0.8-alpine
