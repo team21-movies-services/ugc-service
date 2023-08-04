@@ -51,7 +51,7 @@ class KafkaConsumer:
         await consumer.commit({tp: offset})
         logger.debug(f"commited: tp - {tp} offset - {offset}")
 
-    async def consumer_partition_loop(self) -> AsyncGenerator[MovieViewed, None]:
+    async def consumer_partition_loop(self) -> AsyncGenerator[list[MovieViewed], None]:
         """Цикл получения записей MovieViewed из кафки по партициям"""
         consumer = self._consumer
         try:
@@ -59,21 +59,12 @@ class KafkaConsumer:
             while True:
                 for assignment in consumer.assignment():
                     partition: TopicPartition = assignment
-                    await consumer.seek_to_end(partition)
                     response: dict[TopicPartition, list[ConsumerRecord]] = await consumer.getmany(
                         partition,
                         timeout_ms=1000,
                     )
                     if partition in response:
-                        for record in response[partition]:
-                            key: bytes = record.key or b''
-                            value: bytes = record.value or b''
-                            user_id, film_id = key.decode().split('+')
-                            # TODO: return batch?
-                            yield MovieViewed(
-                                user_id=user_id,
-                                film_id=film_id,
-                                viewed_frame=int(value.decode()),
-                            )
+                        batch = [MovieViewed.from_consumer_record(record) for record in response[partition]]
+                        yield batch
         finally:
             await consumer.stop()
