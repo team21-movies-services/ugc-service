@@ -13,7 +13,7 @@ class ClickHouseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='CLICKHOUSE_', case_sensitive=False)
 
     host: str = 'localhost'
-    port: int = 8123
+    port: int = 9000
     user: str = 'default'
     password: str = "1234"
     database: str = 'default'
