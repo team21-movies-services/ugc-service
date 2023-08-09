@@ -93,6 +93,73 @@ paths:
                 $ref: '#/components/schemas/Rating'
         '404':
           description: Not Found
+  
+  /favorites:
+    get:
+      tags:
+        - favorites
+      summary: Показать закладки пользователя
+      parameters:
+        - $ref: '#/components/parameters/FilmId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayFavorites'
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
+  /favorites/{film_id}:
+    get:
+      tags:
+        - favorites
+      summary: Узнать находится ли фильм в закладках
+      parameters:
+        - $ref: '#/components/parameters/FilmId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
+    post:
+      tags:
+        - favorites
+      summary: Добавить фильм в закладки
+      parameters:
+        - $ref: '#/components/parameters/FilmId'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      security:
+        - access_key: []
+    delete:
+      tags:
+        - favorites
+      summary: Удалить закладку
+      parameters:
+        - $ref: '#/components/parameters/FilmId'
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
 components:
   schemas:
     RatingCount:
@@ -116,6 +183,26 @@ components:
         rating:
           type: integer
           example: 10
+    ArrayFavorites:
+      required:
+        - movie_id
+      type: array
+      items:
+          type: string
+          format: uuid
+      example: [
+        '1eae720b-0121-47b6-ab3a-b4cf96f08370',
+        '8dcb2a02-7892-483d-9269-c8d583ffc8c4',
+      ]
+    Favorite:
+      required:
+        - favorite_id
+      type: object
+      properties:
+        favorite_id:
+          type: string
+          format: uuid
+          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
   parameters:
     FilmId:
       name: film_id
@@ -123,7 +210,7 @@ components:
       description: UUID фильма
       required: true
       schema:
-        type: integer
+        type: string
         format: uuid
     UserId:
       name: user_id
