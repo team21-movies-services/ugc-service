@@ -11,12 +11,27 @@ tags:
   - name: favorites
     description: Закладки
 paths:
+  /ratings:
+    get:
+      tags:
+        - ratings
+      summary: Показать оценённые фильмы для авторизованного пользователя
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayRating'
+        '401':
+          description: Unauthorized
+      security:
+        - access_key: []
   /ratings/{film_id}:
     get:
       tags:
         - ratings
-      summary: Показать количество оценок фильма
-      description: Показывает количество оценок фильма и среднюю оценку
+      summary: Показать оценку фильма для авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
@@ -25,13 +40,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RatingCount'
+                $ref: '#/components/schemas/Rating'
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
+      security:
+        - access_key: []
     post:
       tags:
         - ratings
-      summary: Оценить фильм
+      summary: Оценить фильм авторизованному пользователю
       description: Добавляет оценку к фильму от 0 до 10
       parameters:
         - $ref: '#/components/parameters/FilmId'
@@ -41,6 +60,8 @@ paths:
           description: Created
         '400':
           description: Bad Request
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
         '409':
@@ -50,7 +71,7 @@ paths:
     patch:
       tags:
         - ratings
-      summary: Изменить оценку фильма
+      summary: Изменить оценку фильма для авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
         - $ref: '#/components/parameters/Rate'
@@ -59,6 +80,8 @@ paths:
           description: OK
         '400':
           description: Bad Request
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
       security:
@@ -66,39 +89,39 @@ paths:
     delete:
       tags:
         - ratings
-      summary: Удалить оценку
+      summary: Удалить оценку фильма для авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
         '200':
           description: OK
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
       security:
         - access_key: []
-  /ratings/{film_id}/{user_id}:
+  /ratings/{film_id}/info:
     get:
       tags:
         - ratings
-      summary: Показать оценку пользователя
+      summary: Показать количество оценок и среднюю оценку фильма
       parameters:
         - $ref: '#/components/parameters/FilmId'
-        - $ref: '#/components/parameters/UserId'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Rating'
+                $ref: '#/components/schemas/RatingInfo'
         '404':
           description: Not Found
-  
   /favorites:
     get:
       tags:
         - favorites
-      summary: Показать закладки пользователя
+      summary: Показать закладки авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
@@ -108,6 +131,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayFavorites'
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
       security:
@@ -116,7 +141,7 @@ paths:
     get:
       tags:
         - favorites
-      summary: Узнать находится ли фильм в закладках
+      summary: Показать закладку авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
@@ -126,6 +151,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Favorite'
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
       security:
@@ -133,7 +160,7 @@ paths:
     post:
       tags:
         - favorites
-      summary: Добавить фильм в закладки
+      summary: Добавить фильм в закладки для авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
@@ -141,6 +168,8 @@ paths:
           description: Created
         '400':
           description: Bad Request
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
         '409':
@@ -150,22 +179,21 @@ paths:
     delete:
       tags:
         - favorites
-      summary: Удалить закладку
+      summary: Удалить фильм из закладок для авторизованного пользователя
       parameters:
         - $ref: '#/components/parameters/FilmId'
       responses:
         '200':
           description: OK
+        '401':
+          description: Unauthorized
         '404':
           description: Not Found
       security:
         - access_key: []
 components:
   schemas:
-    RatingCount:
-      required:
-        - count
-        - average
+    RatingInfo:
       type: object
       properties:
         count:
@@ -175,34 +203,49 @@ components:
           type: number
           format: float
           example: 102.14
-    Rating:
       required:
-        - rating
+        - count
+        - average
+    Rating:
       type: object
       properties:
+        rating_id:
+          type: string
+          format: uuid
+          example: '8dcb2a02-7892-483d-9269-c8d583ffc8c4'
+        film_id:
+          type: string
+          format: uuid
+          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
         rating:
           type: integer
           example: 10
-    ArrayFavorites:
       required:
-        - movie_id
+        - rating_id
+        - film_id
+        - rating
+    ArrayRating:
       type: array
       items:
-          type: string
-          format: uuid
-      example: [
-        '1eae720b-0121-47b6-ab3a-b4cf96f08370',
-        '8dcb2a02-7892-483d-9269-c8d583ffc8c4',
-      ]
+        $ref: '#/components/schemas/Rating'
     Favorite:
-      required:
-        - favorite_id
       type: object
       properties:
         favorite_id:
           type: string
           format: uuid
           example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
+        film_id:
+          type: string
+          format: uuid
+          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
+      required:
+        - favorite_id
+        - film_id
+    ArrayFavorites:
+      type: array
+      items:
+        $ref: '#/components/schemas/Favorite'
   parameters:
     FilmId:
       name: film_id
