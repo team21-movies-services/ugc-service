@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: UGC-service
+  description: Описание для endpoint'ов ugc сервиса
+  version: 0.1.0
+tags:
+  - name: ratings
+    description: Оценки фильмов
+  - name: reviews
+    description: Рецензии к фильмам
+  - name: favorites
+    description: Закладки
+paths:
+  /ratings/{film_id}:
+    get:
+      tags:
+        - ratings
+      summary: Показать количество оценок фильма
+      description: Показывает количество оценок фильма и среднюю оценку
+      parameters:
+        - name: film_id
+          in: path
+          description: UUID фильма
+          required: true
+          schema:
+            type: integer
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingCount'
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - ratings
+      summary: Оценить фильм
+      description: Добавляет оценку к фильму от 0 до 10
+      parameters:
+        - name: film_id
+          in: path
+          description: UUID фильма
+          required: true
+          schema:
+            type: integer
+            format: uuid
+        - name: rate
+          in: query
+          description: Оценка фильма
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 10
+          required: true
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      security:
+        - access_key: []
+    patch:
+      tags:
+        - ratings
+      summary: Изменить оценку фильма
+      parameters:
+        - name: film_id
+          in: path
+          description: UUID фильма
+          required: true
+          schema:
+            type: integer
+            format: uuid
+        - name: rate
+          in: query
+          description: Оценка фильма
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 10
+          required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
+    delete:
+      tags:
+        - ratings
+      summary: Удалить оценку
+      parameters:
+        - name: film_id
+          in: path
+          description: UUID фильма
+          required: true
+          schema:
+            type: integer
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
+components:
+  schemas:
+    RatingCount:
+      required:
+        - count
+        - average
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 155
+        average:
+          type: number
+          format: float
+          example: 102.14
+  securitySchemes:
+    access_key:
+      type: apiKey
+      in: header
+      name: Authorization
