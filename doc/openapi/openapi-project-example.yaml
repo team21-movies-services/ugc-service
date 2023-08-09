@@ -18,13 +18,7 @@ paths:
       summary: Показать количество оценок фильма
       description: Показывает количество оценок фильма и среднюю оценку
       parameters:
-        - name: film_id
-          in: path
-          description: UUID фильма
-          required: true
-          schema:
-            type: integer
-            format: uuid
+        - $ref: '#/components/parameters/FilmId'
       responses:
         '200':
           description: Successful operation
@@ -40,21 +34,8 @@ paths:
       summary: Оценить фильм
       description: Добавляет оценку к фильму от 0 до 10
       parameters:
-        - name: film_id
-          in: path
-          description: UUID фильма
-          required: true
-          schema:
-            type: integer
-            format: uuid
-        - name: rate
-          in: query
-          description: Оценка фильма
-          schema:
-            type: integer
-            minimum: 0
-            maximum: 10
-          required: true
+        - $ref: '#/components/parameters/FilmId'
+        - $ref: '#/components/parameters/Rate'
       responses:
         '201':
           description: Created
@@ -71,21 +52,8 @@ paths:
         - ratings
       summary: Изменить оценку фильма
       parameters:
-        - name: film_id
-          in: path
-          description: UUID фильма
-          required: true
-          schema:
-            type: integer
-            format: uuid
-        - name: rate
-          in: query
-          description: Оценка фильма
-          schema:
-            type: integer
-            minimum: 0
-            maximum: 10
-          required: true
+        - $ref: '#/components/parameters/FilmId'
+        - $ref: '#/components/parameters/Rate'
       responses:
         '200':
           description: OK
@@ -100,13 +68,7 @@ paths:
         - ratings
       summary: Удалить оценку
       parameters:
-        - name: film_id
-          in: path
-          description: UUID фильма
-          required: true
-          schema:
-            type: integer
-            format: uuid
+        - $ref: '#/components/parameters/FilmId'
       responses:
         '200':
           description: OK
@@ -114,6 +76,23 @@ paths:
           description: Not Found
       security:
         - access_key: []
+  /ratings/{film_id}/{user_id}:
+    get:
+      tags:
+        - ratings
+      summary: Показать оценку пользователя
+      parameters:
+        - $ref: '#/components/parameters/FilmId'
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+        '404':
+          description: Not Found
 components:
   schemas:
     RatingCount:
@@ -129,6 +108,40 @@ components:
           type: number
           format: float
           example: 102.14
+    Rating:
+      required:
+        - rating
+      type: object
+      properties:
+        rating:
+          type: integer
+          example: 10
+  parameters:
+    FilmId:
+      name: film_id
+      in: path
+      description: UUID фильма
+      required: true
+      schema:
+        type: integer
+        format: uuid
+    UserId:
+      name: user_id
+      in: path
+      description: UUID фильма
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Rate:
+      name: rate
+      in: query
+      description: Оценка фильма
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 10
+      required: true
   securitySchemes:
     access_key:
       type: apiKey
