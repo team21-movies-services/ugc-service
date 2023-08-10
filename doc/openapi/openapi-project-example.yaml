@@ -74,13 +74,46 @@ paths:
           description: Not Found
       security:
         - access_key: []
+  /events/{object_type}:
     get:
       tags:
         - Events read
-      summary: Получить информацию
+      summary: Получить объекты пользователя
+      parameters:
+        - $ref: '#/components/parameters/ObjectTypes'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      security:
+        - access_key: []
+  /events/{object_type}/{object_id}:
+    get:
+      tags:
+        - Events read
+      summary: Детальная информация об объекте
+      parameters:
+        - $ref: '#/components/parameters/ObjectTypes'
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      security:
+        - access_key: []
+  /events/{object_type}/{object_id}/{content_type}:
+    get:
+      tags:
+        - Events read
+      summary: Получить дополнительный контент по объекту
       parameters:
         - $ref: '#/components/parameters/EventType'
         - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/ContentsType'
       responses:
         '200':
           description: OK
@@ -225,7 +258,22 @@ components:
         - film
         - review
         - comment
+    ObjectsTypeEnum:
+      type: string
+      enum:
+        - movies
+        - reviews
+        - favorites
+        - reactions
+        - comment
   parameters:
+    ObjectTypes:
+      name: object_type
+      in: path
+      description: UUID объекта
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectsTypeEnum'
     ObjectId:
       name: object_id
       in: path
@@ -234,6 +282,13 @@ components:
       schema:
         type: string
         format: uuid
+    ContentsType:
+      name: content_type
+      in: path
+      description: Тип контента
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectsTypeEnum'
     EventType:
       name: event_type
       in: path
