@@ -4,57 +4,22 @@ info:
   description: Описание для endpoint'ов ugc сервиса
   version: 0.1.0
 tags:
-  - name: ratings
-    description: Оценки фильмов
-  - name: reviews
-    description: Рецензии к фильмам
-  - name: favorites
-    description: Закладки
+  - name: Events control
+    description: Управление эвентами
+  - name: Events read
+    description: Чтение эвентов
 paths:
-  /ratings:
-    get:
-      tags:
-        - ratings
-      summary: Показать оценённые фильмы для авторизованного пользователя
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayRating'
-        '401':
-          description: Unauthorized
-      security:
-        - access_key: []
-  /ratings/{film_id}:
-    get:
-      tags:
-        - ratings
-      summary: Показать оценку фильма для авторизованного пользователя
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rating'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      security:
-        - access_key: []
+  /events:
     post:
       tags:
-        - ratings
-      summary: Оценить фильм авторизованному пользователю
-      description: Добавляет оценку к фильму от 0 до 10
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
-        - $ref: '#/components/parameters/Rate'
+        - Events control
+      summary: Создать эвент
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseEvent'
       responses:
         '201':
           description: Created
@@ -68,13 +33,19 @@ paths:
           description: Conflict
       security:
         - access_key: []
+  /events/{object_id}:
     patch:
       tags:
-        - ratings
-      summary: Изменить оценку фильма для авторизованного пользователя
+        - Events control
+      summary: Редактировать эвент
       parameters:
-        - $ref: '#/components/parameters/FilmId'
-        - $ref: '#/components/parameters/Rate'
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseEvent'
       responses:
         '200':
           description: OK
@@ -86,12 +57,14 @@ paths:
           description: Not Found
       security:
         - access_key: []
+  /events/{event_type}/{object_id}:
     delete:
       tags:
-        - ratings
-      summary: Удалить оценку фильма для авторизованного пользователя
+        - Events control
+      summary: Удалить эвент
       parameters:
-        - $ref: '#/components/parameters/FilmId'
+        - $ref: '#/components/parameters/EventType'
+        - $ref: '#/components/parameters/ObjectId'
       responses:
         '200':
           description: OK
@@ -101,87 +74,13 @@ paths:
           description: Not Found
       security:
         - access_key: []
-  /ratings/{film_id}/info:
     get:
       tags:
-        - ratings
-      summary: Показать количество оценок и среднюю оценку фильма
+        - Events read
+      summary: Получить информацию
       parameters:
-        - $ref: '#/components/parameters/FilmId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RatingInfo'
-        '404':
-          description: Not Found
-  /favorites:
-    get:
-      tags:
-        - favorites
-      summary: Показать закладки авторизованного пользователя
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayFavorites'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      security:
-        - access_key: []
-  /favorites/{film_id}:
-    get:
-      tags:
-        - favorites
-      summary: Показать закладку авторизованного пользователя
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Favorite'
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      security:
-        - access_key: []
-    post:
-      tags:
-        - favorites
-      summary: Добавить фильм в закладки для авторизованного пользователя
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
-      responses:
-        '201':
-          description: Created
-        '400':
-          description: Bad Request
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-        '409':
-          description: Conflict
-      security:
-        - access_key: []
-    delete:
-      tags:
-        - favorites
-      summary: Удалить фильм из закладок для авторизованного пользователя
-      parameters:
-        - $ref: '#/components/parameters/FilmId'
+        - $ref: '#/components/parameters/EventType'
+        - $ref: '#/components/parameters/ObjectId'
       responses:
         '200':
           description: OK
@@ -193,85 +92,155 @@ paths:
         - access_key: []
 components:
   schemas:
-    RatingInfo:
+    BaseEvent:
       type: object
       properties:
-        count:
-          type: integer
-          example: 155
-        average:
+        eventType:
+          $ref: '#/components/schemas/EventTypeEnum'
+        eventTime:
           type: number
-          format: float
-          example: 102.14
+          format: timestamp
+          example: 1691674852
+        eventData:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CommentEvent'
+            - $ref: '#/components/schemas/ReactionEvent'
+            - $ref: '#/components/schemas/RatingEvent'
+            - $ref: '#/components/schemas/FavoriteEvent'
       required:
-        - count
-        - average
-    Rating:
+        - eventType
+        - eventTime
+        - eventData
+    CommentEvent:
       type: object
       properties:
-        rating_id:
+        user_id:
           type: string
           format: uuid
-          example: '8dcb2a02-7892-483d-9269-c8d583ffc8c4'
+          example: 'e5ca88e2-c94c-473b-886b-7e6d65de1997'
         film_id:
           type: string
           format: uuid
-          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
-        rating:
+          example: 'fb68adb6-f4b1-4511-95d5-5ca6cffffafc'
+        parent_type:
+          $ref: '#/components/schemas/ParentEnum'
+        parent_id:
+          type: string
+          format: uuid
+          example: '64b47860-795a-46f5-87b4-aeddbd033521'
+        content:
+          type: string
+          format: text
+      required:
+        - user_id
+        - film_id
+        - parent_type
+        - parent_id
+        - content
+    ReactionEvent:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: 'e5ca88e2-c94c-473b-886b-7e6d65de1997'
+        film_id:
+          type: string
+          format: uuid
+          example: 'fb68adb6-f4b1-4511-95d5-5ca6cffffafc'
+        parent_type:
+          $ref: '#/components/schemas/ParentEnum'
+        parent_id:
+          type: string
+          format: uuid
+          example: '64b47860-795a-46f5-87b4-aeddbd033521'
+        reaction:
+          type: boolean
+      required:
+        - user_id
+        - film_id
+        - parent_type
+        - parent_id
+        - reaction
+    RatingEvent:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: 'e5ca88e2-c94c-473b-886b-7e6d65de1997'
+        film_id:
+          type: string
+          format: uuid
+          example: 'fb68adb6-f4b1-4511-95d5-5ca6cffffafc'
+        parent_type:
+          $ref: '#/components/schemas/ParentEnum'
+        parent_id:
+          type: string
+          format: uuid
+          example: '64b47860-795a-46f5-87b4-aeddbd033521'
+        rate:
           type: integer
-          example: 10
+          minimum: 0
+          maximum: 10
       required:
-        - rating_id
+        - user_id
         - film_id
-        - rating
-    ArrayRating:
-      type: array
-      items:
-        $ref: '#/components/schemas/Rating'
-    Favorite:
+        - parent_type
+        - parent_id
+        - rate
+    FavoriteEvent:
       type: object
       properties:
-        favorite_id:
+        user_id:
           type: string
           format: uuid
-          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
+          example: 'e5ca88e2-c94c-473b-886b-7e6d65de1997'
         film_id:
           type: string
           format: uuid
-          example: '1eae720b-0121-47b6-ab3a-b4cf96f08370'
+          example: 'fb68adb6-f4b1-4511-95d5-5ca6cffffafc'
+        parent_type:
+          $ref: '#/components/schemas/ParentEnum'
+        parent_id:
+          type: string
+          format: uuid
+          example: '64b47860-795a-46f5-87b4-aeddbd033521'
       required:
-        - favorite_id
+        - user_id
         - film_id
-    ArrayFavorites:
-      type: array
-      items:
-        $ref: '#/components/schemas/Favorite'
+        - parent_type
+        - parent_id
+    EventTypeEnum:
+      type: string
+      enum:
+        - comment
+        - reaction
+        - rating
+        - favorite
+    ParentEnum:
+      type: string
+      enum:
+        - film
+        - review
+        - comment
   parameters:
-    FilmId:
-      name: film_id
+    ObjectId:
+      name: object_id
       in: path
-      description: UUID фильма
+      description: UUID объекта
       required: true
       schema:
         type: string
         format: uuid
-    UserId:
-      name: user_id
+    EventType:
+      name: event_type
       in: path
-      description: UUID фильма
+      description: Тип эвента который нужно удалить
       required: true
       schema:
-        type: string
-        format: uuid
-    Rate:
-      name: rate
-      in: query
-      description: Оценка фильма
-      schema:
-        type: integer
-        minimum: 0
-        maximum: 10
-      required: true
+        $ref: '#/components/schemas/EventTypeEnum'
   securitySchemes:
     access_key:
       type: apiKey
