@@ -6,6 +6,7 @@ from core.config import Settings
 from providers.cache_providers import RedisProvider
 from providers.http_providers import HTTPXClientProvider
 from providers.kafka_provider import KafkaProvider
+from providers.sentry_provider import SentryProvider
 
 logger = logging.getLogger(__name__)
 
@@ -26,3 +27,8 @@ def setup_providers(app: FastAPI, settings: Settings):
     kafka_provider = KafkaProvider(app=app, host=settings.kafka.host)
     kafka_provider.register_events()
     logger.info(f"Setup Kafka Provider. host: {settings.kafka.host}")
+
+    if settings.project.is_production and settings.sentry.dsn:
+        sentry_provider = SentryProvider(app=app, dsn=settings.sentry.dsn)
+        sentry_provider.register_events()
+        logger.info("Setup Sentry Provider.")
