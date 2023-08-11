@@ -28,7 +28,7 @@ def setup_providers(app: FastAPI, settings: Settings):
     kafka_provider.register_events()
     logger.info(f"Setup Kafka Provider. host: {settings.kafka.host}")
 
-    if settings.project.is_production and settings.sentry.dsn:
+    if settings.sentry.enable:
         sentry_provider = SentryProvider(app=app, dsn=settings.sentry.dsn)
         sentry_provider.register_events()
         logger.info("Setup Sentry Provider.")
