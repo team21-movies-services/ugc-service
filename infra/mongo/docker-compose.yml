@@ -1,0 +1,156 @@
+version: '3.8'
+
+services:
+
+# Setup
+
+  mongo-setup:
+    container_name: mongo-setup
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: on-failure:10
+    environment:
+      - MONGO_DB_NAME=${MONGO_DB_NAME:-film_events}
+      - MONGO_COLLECTION_NAME=${MONGO_COLLECTION_NAME:-film_events}
+      - MONGO_SHARD_FIELD=${MONGO_SHARD_FIELD:-user_id}
+    volumes:
+      - ../../infra/mongo/scripts:/scripts
+    command: bash /scripts/init.sh
+
+# Replica 1
+
+  # Shard 1
+  mongors1n1:
+    container_name: mongors1n1
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_1_PORT:-27017}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard1_data:/data/db
+    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
+
+  # Shard 2
+  mongors1n2:
+    container_name: mongors1n2
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_2_PORT:-27027}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard2_data:/data/db
+    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
+
+  # Shard 3
+  mongors1n3:
+    container_name: mongors1n3
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_3_PORT:-27037}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard3_data:/data/db
+    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
+
+# Replica 2
+
+  # Shard 1
+  mongors2n1:
+    container_name: mongors2n1
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_4_PORT:-27047}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard4_data:/data/db
+    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
+
+  # Shard 2
+  mongors2n2:
+    container_name: mongors2n2
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_5_PORT:-27057}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard5_data:/data/db
+    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
+
+  # Shard 3
+  mongors2n3:
+    container_name: mongors2n3
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    restart: always
+    ports:
+      - ${MONGO_SHARD_6_PORT:-27067}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_shard6_data:/data/db
+    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
+
+# Config servers
+
+  mongocfg1:
+    container_name: mongocfg1
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_config1_data:/data/db
+    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
+
+  mongocfg2:
+    container_name: mongocfg2
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_config2_data:/data/db
+    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
+
+  mongocfg3:
+    container_name: mongocfg3
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_config3_data:/data/db
+    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
+
+# Routers 
+
+  mongos1:
+    container_name: mongos1
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    depends_on:
+      - mongocfg1
+      - mongocfg2
+    ports:
+      - ${MONGOS_1_PORT:-27019}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    command: mongos --configdb mongors1conf/mongocfg1:27017,mongocfg2:27017,mongocfg3:27017 --port 27017 --bind_ip_all
+
+  mongos2:
+    container_name: mongos2
+    image: "mongo:${MONGO_VERSION:-5.0.19}"
+    depends_on:
+      - mongocfg1
+      - mongocfg2
+    ports:
+      - ${MONGOS_2_PORT:-27020}:27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    command: mongos --configdb mongors1conf/mongocfg1:27017,mongocfg2:27017,mongocfg3:27017 --port 27017 --bind_ip_all
+
+volumes:
+  mongo_shard1_data:
+  mongo_shard2_data:
+  mongo_shard3_data:
+  mongo_shard4_data:
+  mongo_shard5_data:
+  mongo_shard6_data:
+  mongo_config1_data:
+  mongo_config2_data:
+  mongo_config3_data:
