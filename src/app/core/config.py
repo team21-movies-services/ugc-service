@@ -15,6 +15,12 @@ class KafkaConfig(BaseSettings):
     host: str = Field(default=..., alias='KAFKA_HOST')
 
 
+# Настройки Sentry
+class SentryConfig(BaseSettings):
+    dsn: str = Field(default=..., alias='SENTRY_DSN')
+    enable: bool = Field(default=True, alias='SENTRY_ENABLE')
+
+
 # Название проекта. Используется в Swagger-документации
 class ProjectConfig(BaseSettings):
     name: str = Field(default='ugc_service_api', alias='PROJECT_NAME')
@@ -26,6 +32,7 @@ class Settings(BaseSettings):
     project: ProjectConfig = ProjectConfig()
     redis: RedisConfig = RedisConfig()
     kafka: KafkaConfig = KafkaConfig()
+    sentry: SentryConfig = SentryConfig()
 
 
 settings = Settings()
