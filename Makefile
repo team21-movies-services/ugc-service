@@ -117,21 +117,21 @@ test-uninstall-mongo:
 
 .PHONY: up-mongo
 up-mongo: create_network
-    @docker-compose -f ./infra/mongo/docker-compose.yml up -d
+	@docker-compose -f ./infra/mongo/docker-compose.yml up -d
 
 .PHONY: down-mongo
 down-mongo: create_network
-    @docker-compose -f ./infra/mongo/docker-compose.yml down
+	@docker-compose -f ./infra/mongo/docker-compose.yml down
 
 .PHONY: logs-mongo
 logs-mongo: create_network
-    @docker-compose -f ./infra/mongo/docker-compose.yml logs -f
+	@docker-compose -f ./infra/mongo/docker-compose.yml logs -f
 
 .PHONY: restart-mongo
 restart-mongo: down-mongo up-mongo ## restart mongo services
 
 .PHONY: uninstall-mongo
 uninstall-mongo: create_network
-    @docker-compose -f ./infra/mongo/docker-compose.yml down --remove-orphans --volumes
+	@docker-compose -f ./infra/mongo/docker-compose.yml down --remove-orphans --volumes
 
 # mongo end
