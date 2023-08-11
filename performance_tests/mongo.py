@@ -8,10 +8,10 @@ from utils import gen_data, timer_dec
 BATCH_SIZE: int = 1000
 BATCH_AMOUNT: int = 100
 
-COLLECTION_NAME: str = 'film_event'
-DB_NAME: str = "film_event"
+COLLECTION_NAME: str = 'views'
+DB_NAME: str = "test_db"
 
-uri = "mongodb://localhost:27019"
+uri = "mongodb://root:root@localhost:27017"
 
 client: MongoClient = MongoClient(uri)
 db = client[DB_NAME]
