@@ -42,8 +42,8 @@ jobs:
 
     - name: "Запуск линтеров: black, isort"
       run: |
-        poetry run black ./src --format html --report black-report.html
-        poetry run isort ./src
+        poetry run black ./src --check > black-report.txt
+        poetry run isort ./src --check
 
     - name: Run black on full codebase
       uses: psf/black@stable
@@ -54,5 +54,5 @@ jobs:
         name: lint-reports
         path: |
           flake-reports
-          black-report.html
+          black-report.txt
 
