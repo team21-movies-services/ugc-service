@@ -16,7 +16,7 @@ profile = "black"
 src_paths = ["src/app", "performance_tests/"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10 || ^3.11"
 fastapi = "^0.100.0"
 pydantic = "^2.1.1"
 python-dotenv = "^1.0.0"
@@ -30,6 +30,7 @@ pydantic-settings = "^2.0.2"
 aiokafka = "^0.8.1"
 sentry-sdk = {extras = ["fastapi"], version = "^1.29.2"}
 motor = "^3.2.0"
+flake8-html = "^0.4.3"
 
 
 [tool.poetry.group.dev.dependencies]
