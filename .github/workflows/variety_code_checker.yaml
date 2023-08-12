@@ -1,0 +1,55 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Code check with a variety of Python versions
+
+on: [pull_request]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+    - name: Clone code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Установка Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+        virtualenvs-path: .venv
+
+    - name: "Установка зависимостей"
+      run: poetry install --no-root --only dev || true
+      
+    - name: "Запуск линтеров: flake mypy"
+      run: |
+        poetry run flake8 ./src --html --htmldir lint-reports
+        poetry run mypy ./src
+
+    - name: "Запуск линтеров: black, isort"
+      run: |
+        poetry run black ./src --format html --report black-report.html
+        poetry run isort ./src
+
+    - name: Run black on full codebase
+      uses: psf/black@stable
+
+    - name: Сохранение HTML-отчетов
+      uses: actions/upload-artifact@v2
+      with:
+        name: lint-reports
+        path: |
+          lint-reports
+          black-report.html
