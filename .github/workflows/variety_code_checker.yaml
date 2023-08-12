@@ -56,3 +56,20 @@ jobs:
           flake-reports
           black-report.txt
 
+  send_notification:
+    needs: linter
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+
+    steps:
+      - name: Get PR author
+        id: get_author
+        run: echo "::set-output name=author::$(jq -r '.pull_request.user.login' $GITHUB_EVENT_PATH)"
+
+      - name: Отправка уведомления в Telegram
+        uses: "appleboy/telegram-action@v0.1.1"
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.BOT_TOKEN }}
+          args: New pull-request from ${{ steps.get_author.outputs.author }} in ${{ github.repository }}. Code check have passed
+
