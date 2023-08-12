@@ -29,6 +29,7 @@ redis = "^4.6.0"
 pydantic-settings = "^2.0.2"
 aiokafka = "^0.8.1"
 sentry-sdk = {extras = ["fastapi"], version = "^1.29.2"}
+motor = "^3.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
