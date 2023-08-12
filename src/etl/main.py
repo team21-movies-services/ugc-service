@@ -1,10 +1,10 @@
 import asyncio
 import logging.config
 
-from repository import ClickHouseRepository
 from settings import LOGGING, settings
 
 from clients import KafkaConsumer
+from repository import ClickHouseRepository
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('etl')
