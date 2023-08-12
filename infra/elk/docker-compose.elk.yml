@@ -1,0 +1,92 @@
+version: '3.7'
+
+services:
+
+  movies-elk-setup:
+    profiles:
+      - movies-elk-setup
+    build:
+      context: setup/
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    init: true
+    volumes:
+      - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./setup/lib.sh:/lib.sh:ro,Z
+      - ./setup/roles:/roles:ro,Z
+    environment:
+      ELASTIC_PASSWORD: ${ES_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - movies-elk-network
+    depends_on:
+      - movies-elk-elasticsearch
+    env_file:
+      - ./.env
+
+  movies-elk-elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - ${ES_PORT}:9200
+    environment:
+      node.name: ${ES_HOST}
+      ELASTIC_PASSWORD: ${ES_PASSWORD:-}
+      discovery.type: single-node
+    networks:
+      - movies-elk-network
+    restart: unless-stopped
+    env_file:
+      - ./.env
+
+  movies-elk-logstash:
+    build:
+      context: logstash/
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - ${LOGSTASH_PORT}:5044/udp
+    environment:
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    networks:
+      - movies-elk-network
+    depends_on:
+      - movies-elk-elasticsearch
+    restart: unless-stopped
+    env_file:
+      - ./.env
+
+  movies-elk-kibana:
+    build:
+      context: kibana/
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - ${KIBANA_PORT}:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - movies-elk-network
+    depends_on:
+      - movies-elk-elasticsearch
+    restart: unless-stopped
+    env_file:
+      - ./.env
+
+networks:
+  movies-elk-network:
+    driver: bridge
+
+volumes:
+  elasticsearch:
