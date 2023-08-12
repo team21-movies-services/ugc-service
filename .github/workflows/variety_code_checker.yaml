@@ -35,7 +35,9 @@ jobs:
       
     - name: "Запуск линтеров: flake mypy"
       run: |
-        poetry run flake8 ./src --format=html --htmldir=flake-reports
+        poetry run flake8 ./src --format=html > flake-report.html
+        mkdir -p flake-reports
+        mv flake-report.html flake-reports/
         poetry run mypy ./src
 
     - name: "Запуск линтеров: black, isort"
@@ -53,3 +55,4 @@ jobs:
         path: |
           flake-reports
           black-report.html
+
