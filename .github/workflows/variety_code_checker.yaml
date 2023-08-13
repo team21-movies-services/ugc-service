@@ -59,7 +59,7 @@ jobs:
   send_notification:
     needs: linter
     runs-on: ubuntu-latest
-    if: ${{ succes() }}
+    if: ${{ success() }}
 
     steps:
       - name: Get PR author
