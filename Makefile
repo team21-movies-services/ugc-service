@@ -117,7 +117,7 @@ uninstall-mongo:
 
 .PHONY: up-elk
 up-elk:
-	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml up -d
+	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml up -d --build
 
 .PHONY: down-elk
 down-elk:

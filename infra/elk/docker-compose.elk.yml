@@ -90,6 +90,26 @@ services:
     env_file:
       - ./.env
 
+  ugc-service-filebeat:
+    build:
+      context: filebeat/
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
+      - ../../logs/ugc_service:/var/log/ugc_service:ro
+      - ../../logs/nginx:/var/log/nginx:ro
+    environment:
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+    networks:
+      - movies-elk-network
+    depends_on:
+      movies-elk-setup:
+        condition: service_completed_successfully
+    env_file:
+      - ./.env
+
 networks:
   movies-elk-network:
     driver: bridge
