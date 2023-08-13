@@ -116,24 +116,22 @@ uninstall-mongo:
 # ELK start
 
 .PHONY: up-elk
-up-elk: create_network
-	# @docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml up movies-elk-setup -d
-	# @sleep 30
+up-elk:
 	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml up -d
 
 .PHONY: down-elk
-down-elk: create_network
+down-elk:
 	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml down
 
 .PHONY: logs-elk
-logs-elk: create_network
+logs-elk:
 	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml logs -f
 
 .PHONY: restart-elk
 restart-elk: down-elk up-elk
 
 .PHONY: uninstall-elk
-uninstall-elk: create_network
+uninstall-elk:
 	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml down --remove-orphans --volumes
 
 # ELK end

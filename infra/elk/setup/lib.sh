@@ -20,43 +20,6 @@ function suberr {
 	echo "   ⠍ $1" >&2
 }
 
-# Poll the 'elasticsearch' service until it responds with HTTP code 200.
-function wait_for_elasticsearch {
-	local elasticsearch_host="${ES_HOST:-movies-elk-elasticsearch}"
-
-	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}' "http://${elasticsearch_host}:${ES_PORT}/" )
-
-	if [[ -n "${ES_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ES_PASSWORD}" )
-	fi
-
-	local -i result=1
-	local output
-
-	# retry for max 300s (60*5s)
-	for _ in $(seq 1 60); do
-		local -i exit_code=0
-		output="$(curl "${args[@]}")" || exit_code=$?
-
-		if ((exit_code)); then
-			result=$exit_code
-		fi
-
-		if [[ "${output: -3}" -eq 200 ]]; then
-			result=0
-			break
-		fi
-
-		sleep 5
-	done
-
-	if ((result)) && [[ "${output: -3}" -ne 000 ]]; then
-		echo -e "\n${output::-3}"
-	fi
-
-	return $result
-}
-
 # Poll the Elasticsearch users API until it returns users.
 function wait_for_builtin_users {
 	local elasticsearch_host="${ES_HOST:-movies-elk-elasticsearch}"
