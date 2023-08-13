@@ -264,13 +264,13 @@ pycparser = "*"
 
 [[package]]
 name = "cfgv"
-version = "3.3.1"
+version = "3.4.0"
 description = "Validate configuration and produce human readable error messages."
 optional = false
-python-versions = ">=3.6.1"
+python-versions = ">=3.8"
 files = [
-    {file = "cfgv-3.3.1-py2.py3-none-any.whl", hash = "sha256:c6a0883f3917a037485059700b9e75da2464e6c27051014ad85ba6aaa5884426"},
-    {file = "cfgv-3.3.1.tar.gz", hash = "sha256:f5a830efb9ce7a445376bb66ec94c638a9787422f96264c98edc6bdeed8ab736"},
+    {file = "cfgv-3.4.0-py2.py3-none-any.whl", hash = "sha256:b7265b1f29fd3316bfcd2b330d63d024f2bfd8bcb8b0272f8e19a504856c48f9"},
+    {file = "cfgv-3.4.0.tar.gz", hash = "sha256:e52591d4c5f5dead8e0f673fb16db7949d2cfb3f7da4582893288f0ded8fe560"},
 ]
 
 [[package]]
@@ -947,6 +947,47 @@ files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
 ]
+
+[[package]]
+name = "motor"
+version = "3.2.0"
+description = "Non-blocking MongoDB driver for Tornado or asyncio"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "motor-3.2.0-py3-none-any.whl", hash = "sha256:82cd3d8a3b57e322c3fa382a393b52828c9a2e98b315c78af36f01bae78af6a6"},
+    {file = "motor-3.2.0.tar.gz", hash = "sha256:4fb1e8502260f853554f24115421584e83904a6debb577354d33e9711ee99008"},
+]
+
+[package.dependencies]
+pymongo = ">=4.4,<5"
+
+[package.extras]
+aws = ["pymongo[aws] (>=4.4,<5)"]
+encryption = ["pymongo[encryption] (>=4.4,<5)"]
+gssapi = ["pymongo[gssapi] (>=4.4,<5)"]
+ocsp = ["pymongo[ocsp] (>=4.4,<5)"]
+snappy = ["pymongo[snappy] (>=4.4,<5)"]
+srv = ["pymongo[srv] (>=4.4,<5)"]
+zstd = ["pymongo[zstd] (>=4.4,<5)"]
+
+[[package]]
+name = "motor-types"
+version = "1.0.0b2"
+description = "Python stubs for Motor, a Non-Blocking MongoDB driver for Python's Tornado and AsyncIO based applications."
+optional = false
+python-versions = ">=3.8.0,<4.0"
+files = [
+    {file = "motor_types-1.0.0b2-py3-none-any.whl", hash = "sha256:f02e57c5ba957020ee2e8ea147fde1c847d753f8481f89114dafdf54b5577b91"},
+    {file = "motor_types-1.0.0b2.tar.gz", hash = "sha256:b00745e6562a4bdfd41b4de1e4d9221b3e3bd3f755458e4cb758b44a7a1dd8d4"},
+]
+
+[package.dependencies]
+pymongo = ">=4.3.0"
+typing-extensions = ">=4.0.0"
+
+[package.extras]
+motor = ["dnspython (>=2.3.0)", "motor (>=3.0.0)"]
 
 [[package]]
 name = "mypy"
@@ -1873,4 +1914,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10 || ^3.11"
-content-hash = "814f3971ac8ffb26a9d5d36f7efecd647c203b333836005a7d4c16cc85ebe857"
+content-hash = "143c2b4bcb0e656d5147f17deb00f8c81b7a641e151e4a07a6c09e87b4466071"
