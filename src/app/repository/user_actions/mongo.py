@@ -15,5 +15,5 @@ class MongoUserActionsRepository(AbstractUserActionRepository):
         self.collection: AsyncIOMotorCollection = self.db.user_actions
 
     async def insert_action(self, action: Action):
-        result = await self.collection.insert_one(action.model_dump())
+        result = await self.collection.insert_one(action.model_dump(by_alias=True))
         return result.inserted_id
