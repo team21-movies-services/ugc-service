@@ -59,17 +59,28 @@ jobs:
   send_notification:
     needs: linter
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ succes() }}
 
     steps:
       - name: Get PR author
-        id: get_author
-        run: echo "::set-output name=author::$(jq -r '.pull_request.user.login' $GITHUB_EVENT_PATH)"
+        id: pr_info
+        run: | 
+          pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
+          pr_title=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)
+          pr_author=$(jq -r '.pull_request.user.login' $GITHUB_EVENT_PATH)
+
+          echo "::set-output name=number::$pr_number"
+          echo "::set-output name=title::$pr_title"
+          echo "::set-output name=author::$pr_author"
 
       - name: Отправка уведомления в Telegram
         uses: "appleboy/telegram-action@v0.1.1"
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.BOT_TOKEN }}
-          args: New pull-request from ${{ steps.get_author.outputs.author }} in ${{ github.repository }}. Code check have passed
+          args: |
+            New pull-request from ${{ steps.pr_info.outputs.author }} in ${{ github.repository }}. Code check have passed.
+            PR #$number: ${{ steps.pr_info.outputs.title }}
+            PR URL: ${{ github.event.pull_request.html_url }}
+
 
