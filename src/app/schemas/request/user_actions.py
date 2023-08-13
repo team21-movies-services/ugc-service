@@ -76,15 +76,6 @@ class Action(BaseModel):
     def set_action_data_type(cls, values):
         action_data = values.action_data
 
-        # model_mapping = {
-        #     ActionType.comment: CommentData,
-        #     ActionType.reaction: ReactionData,
-        #     ActionType.rating: RatingData,
-        #     ActionType.favorite: FavoriteData
-        # }
-        #
-        # values.action_data = model_mapping[action_type].model_validate(action_data)
-
         match values.action_type:
             case ActionType.reaction:
                 values.action_data = ReactionData.model_validate(action_data)
