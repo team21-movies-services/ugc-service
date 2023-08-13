@@ -1,7 +1,7 @@
 from enum import IntEnum, StrEnum, auto
 
 from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class PyObjectId(ObjectId):
@@ -38,6 +38,7 @@ class ReactionType(IntEnum):
 
 
 class ActionData(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     user_id: str
     film_id: str
 
@@ -67,6 +68,29 @@ class CommentData(ActionData):
 class Action(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True, json_encoders={ObjectId: str})
     id: PyObjectId = Field(default_factory=PyObjectId, alias='_id')
-    actionType: ActionType
-    actionTime: int
-    actionData: ActionData
+    action_type: ActionType = Field(alias='actionType')
+    action_time: int = Field(alias='actionTime')
+    action_data: FavoriteData | CommentData | RatingData | ReactionData = Field(alias='actionData')
+
+    @model_validator(mode='after')
+    def set_action_data_type(cls, values):
+        action_data = values.action_data
+
+        # model_mapping = {
+        #     ActionType.comment: CommentData,
+        #     ActionType.reaction: ReactionData,
+        #     ActionType.rating: RatingData,
+        #     ActionType.favorite: FavoriteData
+        # }
+        #
+        # values.action_data = model_mapping[action_type].model_validate(action_data)
+
+        match values.action_type:
+            case ActionType.reaction:
+                values.action_data = ReactionData.model_validate(action_data)
+            case ActionType.rating:
+                values.action_data = RatingData.model_validate(action_data)
+            case ActionType.favorite:
+                values.action_data = FavoriteData.model_validate(action_data)
+            case ActionType.comment:
+                values.action_data = CommentData.model_validate(action_data)
