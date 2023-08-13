@@ -62,15 +62,6 @@ jobs:
     if: ${{ success() }}
 
     steps:
-      - name: Check PR event type
-        run: |
-          pr_action=$(jq -r '.action' $GITHUB_EVENT_PATH)
-
-          if [[ "$pr_action" != "opened" ]]; then
-            echo "This is not a new PR. Exiting..."
-            exit 0
-          fi
-
       - name: Get PR author
         id: pr_info
         run: | 
