@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+
+  ugc-service-filebeat:
+    build:
+      context: infra/filebeat/.
+      args:
+        STACK_VERSION: ${STACK_VERSION}
+    volumes:
+      - ./infra/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro,Z
+      - ./logs/ugc_service:/var/log/ugc_service:ro
+      - ./logs/nginx:/var/log/nginx:ro
+    environment:
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+    networks:
+      - movies-elk-network
+      - ugc-service-network
+    env_file:
+      - ./.env
+
+networks:
+  movies-elk-network:
+    external: true
+  ugc-service-network:
+    external: true

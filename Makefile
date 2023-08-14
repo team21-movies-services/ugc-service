@@ -4,6 +4,7 @@ help: ## Help
 
 create_network:
 	@docker network create ugc-service-network 2>/dev/null || echo "ugc-service-network is up-to-date"
+	@docker network create movies-elk-network 2>/dev/null || echo "movies-elk-network is up-to-date"
 
 # prod start
 .PHONY: up
@@ -34,30 +35,54 @@ uninstall: ## uninstall all services
 
 .PHONY: up-local
 up-local: create_network ## up local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml up --build
+	@docker-compose \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml \
+	up --build
 
 .PHONY: down-local
 down-local: ## down local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml down
+	@docker-compose \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml \
+	down
 
 .PHONY: build-local
 build-local: ## build local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml build --force-rm
+	@docker-compose \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml \
+	build --force-rm
 
 .PHONY: build-force-local
 build-force-local: ## build force services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml build --no-cache
+	@docker-compose \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml \
+	build --no-cache
 
 .PHONY: logs-local
 logs-local: ## logs local services
-	@docker-compose -f docker-compose.local.yml -f docker-compose.kafka.yml -f docker-compose.override.yml logs -f
+	@docker-compose \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml \
+	logs -f
 
 .PHONY: restart-local
 restart-local: down-local up-local ## logs local services
 
 .PHONY: uninstall-local
 uninstall-local: ## uninstall local services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.local.yml -f docker-compose.kafka.yml down --remove-orphans --volumes
+	@docker-compose \
+	-f docker-compose.override.yml \
+	-f docker-compose.local.yml \
+	-f docker-compose.kafka.yml \
+	down --remove-orphans --volumes
 
 # local end
 
@@ -135,3 +160,50 @@ uninstall-mongo: create_network
 	@docker-compose -f ./infra/mongo/docker-compose.yml down --remove-orphans --volumes
 
 # mongo end
+
+# ELK start
+
+.PHONY: up-elk
+up-elk:
+	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml up -d --build
+
+.PHONY: down-elk
+down-elk:
+	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml down
+
+.PHONY: logs-elk
+logs-elk:
+	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml logs -f
+
+.PHONY: restart-elk
+restart-elk: down-elk up-elk
+
+.PHONY: uninstall-elk
+uninstall-elk:
+	@docker-compose -p movies-elk -f ./infra/elk/docker-compose.elk.yml down --remove-orphans --volumes
+
+# ELK end
+
+
+# FILEBEAT start
+
+.PHONY: up-filebeat
+up-filebeat: create_network
+	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml up -d --build
+
+.PHONY: down-filebeat
+down-filebeat:
+	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml down
+
+.PHONY: logs-filebeat
+logs-filebeat:
+	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml logs -f
+
+.PHONY: restart-filebeat
+restart-filebeat: down-filebeat up-filebeat
+
+.PHONY: uninstall-filebeat
+uninstall-filebeat:
+	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml down --remove-orphans --volumes
+
+# FILEBEAT end
