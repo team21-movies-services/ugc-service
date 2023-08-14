@@ -57,13 +57,12 @@ paths:
           description: Not Found
       security:
         - access_key: []
-  /events/{event_type}/{object_id}:
+  /events/{object_id}:
     delete:
       tags:
         - Events control
       summary: Удалить эвент
       parameters:
-        - $ref: '#/components/parameters/EventType'
         - $ref: '#/components/parameters/ObjectId'
       responses:
         '200':
