@@ -1,7 +1,20 @@
 import os
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# Настройки Mongo
+class MongoConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix='mongo_')
+    host: str = Field(default='127.0.0.1')
+    port: int = Field(default=27017)
+    username: str = Field(default='default')
+    password: str = Field(default='default')
+
+    @property
+    def dsn(self):
+        return f"mongodb+srv://{self.username}:{self.password}@{self.host}:{self.port}"
 
 
 # Настройки Redis
@@ -33,6 +46,7 @@ class Settings(BaseSettings):
     redis: RedisConfig = RedisConfig()
     kafka: KafkaConfig = KafkaConfig()
     sentry: SentryConfig = SentryConfig()
+    mongo: MongoConfig = MongoConfig()
 
 
 settings = Settings()
