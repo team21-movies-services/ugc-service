@@ -13,7 +13,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - /var/log/ugc_service/*
+    - /var/log/ugc_service/*.json
   fields:
     - service: ugc-service
   tags: ["ugc-service"]
@@ -23,7 +23,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - /var/log/nginx/access-log.json
+    - /var/log/nginx/*.json
   tags: ["nginx-access"]
   json:
     keys_under_root: true

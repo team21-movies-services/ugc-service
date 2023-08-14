@@ -4,7 +4,7 @@ import logging
 from .config import settings
 
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-LOG_DEFAULT_HANDLERS = ['console', 'file_rotating']
+LOG_DEFAULT_HANDLERS = ['console']
 
 
 class CustomJsonFormatter(logging.Formatter):
@@ -54,7 +54,7 @@ LOGGING = {
             'formatter': 'json',
             'class': "logging.handlers.RotatingFileHandler",
             "filename": "/logs/logs.json",
-            "maxBytes": 10000,
+            "maxBytes": 100000,
             "backupCount": 5,
         },
     },
@@ -67,12 +67,17 @@ LOGGING = {
             'level': settings.project.log_level,
         },
         'gunicorn.access': {
-            'handlers': ['access', 'file_rotating'],
+            'handlers': ['access'],
             'level': settings.project.log_level,
             'propagate': False,
         },
         'uvicorn.access': {
-            'handlers': ['access', 'file_rotating'],
+            'handlers': ['access'],
+            'level': settings.project.log_level,
+            'propagate': False,
+        },
+        'request': {
+            'handlers': ['file_rotating'],
             'level': settings.project.log_level,
             'propagate': False,
         },
