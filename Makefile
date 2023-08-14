@@ -1,3 +1,7 @@
+.PHONY: help
+help: ## Help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -d | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
 create_network:
 	@docker network create ugc-service-network 2>/dev/null || echo "ugc-service-network is up-to-date"
 	@docker network create movies-elk-network 2>/dev/null || echo "movies-elk-network is up-to-date"
@@ -82,10 +86,6 @@ uninstall-local: ## uninstall local services
 
 # local end
 
-.PHONY: help
-help: ## Help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -d | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
 # kafka start
 
 .PHONY: up-kafka
@@ -112,29 +112,52 @@ uninstall-ch:
 
 # clickhouse end
 
-# vertica start
+# test vertica start
 
-.PHONY: up-vertica
-up-vertica: create_network
+.PHONY: test-up-vertica
+test-up-vertica: create_network
 	@docker-compose -f performance_tests/vertica/docker-compose.vertica.yml up --build
 
 
-.PHONY: uninstall-vertica
-uninstall-vertica:
+.PHONY: test-uninstall-vertica
+test-uninstall-vertica:
 	@docker-compose -f  performance_tests/vertica/docker-compose.vertica.yml down --remove-orphans --volumes
 
 # vertica end
+
+# test mongo start
+
+.PHONY: test-up-mongo
+test-up-mongo: create_network
+	@docker-compose -p ugc-service-mongo-test -f performance_tests/mongo/docker-compose.mongo.yml up --build -d
+
+
+.PHONY: test-uninstall-mongo
+test-uninstall-mongo:
+	@docker-compose -p ugc-service-mongo-test -f  performance_tests/mongo/docker-compose.mongo.yml down --remove-orphans --volumes
+
+# test mongo end
 
 # mongo start
 
 .PHONY: up-mongo
 up-mongo: create_network
-	@docker-compose -p ugc-service-mongo-test -f performance_tests/mongo/docker-compose.mongo.yml up --build -d
+	@docker-compose -f ./infra/mongo/docker-compose.yml up -d
 
+.PHONY: down-mongo
+down-mongo: create_network
+	@docker-compose -f ./infra/mongo/docker-compose.yml down
+
+.PHONY: logs-mongo
+logs-mongo: create_network
+	@docker-compose -f ./infra/mongo/docker-compose.yml logs -f
+
+.PHONY: restart-mongo
+restart-mongo: down-mongo up-mongo ## restart mongo services
 
 .PHONY: uninstall-mongo
-uninstall-mongo:
-	@docker-compose -p ugc-service-mongo-test -f  performance_tests/mongo/docker-compose.mongo.yml down --remove-orphans --volumes
+uninstall-mongo: create_network
+	@docker-compose -f ./infra/mongo/docker-compose.yml down --remove-orphans --volumes
 
 # mongo end
 
