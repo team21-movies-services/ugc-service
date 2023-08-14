@@ -2,7 +2,7 @@ from enum import IntEnum, StrEnum, auto
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from schemas.utils import PyObjectId, to_lower_camel
+from schemas.utils import PyObjectId
 
 
 class ActionType(StrEnum):
@@ -26,7 +26,6 @@ class MongoSchema(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         populate_by_name=True,
-        alias_generator=to_lower_camel,
         extra='forbid',
     )
 
@@ -36,7 +35,7 @@ class ActionData(MongoSchema):
     film_id: str
 
 
-class ReactionData(MongoSchema):
+class ReactionData(ActionData):
     parent_type: ActionParent
     parent_id: str
     reaction: ReactionType
@@ -59,7 +58,7 @@ class CommentData(ActionData):
 
 
 class Action(MongoSchema):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias='_id')
+    id: PyObjectId | None = Field(default=None, alias='_id')
     action_type: ActionType
     action_time: int
     action_data: FavoriteData | CommentData | RatingData | ReactionData
