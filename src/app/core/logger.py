@@ -50,12 +50,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',
         },
-        'file_rotating': {
+        'json': {
             'formatter': 'json',
-            'class': "logging.handlers.RotatingFileHandler",
-            "filename": "/logs/logs.json",
-            "maxBytes": 100000,
-            "backupCount": 5,
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
         },
     },
     'loggers': {
@@ -77,7 +75,7 @@ LOGGING = {
             'propagate': False,
         },
         'request': {
-            'handlers': ['file_rotating'],
+            'handlers': ['json'],
             'level': settings.project.log_level,
             'propagate': False,
         },

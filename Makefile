@@ -189,21 +189,21 @@ uninstall-elk:
 
 .PHONY: up-filebeat
 up-filebeat: create_network
-	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml up -d --build
+	@docker-compose --project-directory . -p ugc-service -f infra/filebeat/docker-compose.filebeat.yml up -d --build
 
 .PHONY: down-filebeat
 down-filebeat:
-	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml down
+	@docker-compose --project-directory . -p ugc-service -f infra/filebeat/docker-compose.filebeat.yml down
 
 .PHONY: logs-filebeat
 logs-filebeat:
-	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml logs -f
+	@docker-compose --project-directory . -p ugc-service -f infra/filebeat/docker-compose.filebeat.yml logs -f
 
 .PHONY: restart-filebeat
 restart-filebeat: down-filebeat up-filebeat
 
 .PHONY: uninstall-filebeat
 uninstall-filebeat:
-	@docker-compose --project-directory . -p ugc-filebeat -f infra/filebeat/docker-compose.filebeat.yml down --remove-orphans --volumes
+	@docker-compose --project-directory . -p ugc-service -f infra/filebeat/docker-compose.filebeat.yml down
 
 # FILEBEAT end

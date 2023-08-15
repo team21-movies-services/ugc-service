@@ -7,8 +7,6 @@ services:
       context: .
       dockerfile: infra/nginx/Dockerfile
     container_name: ugc-service-nginx
-    volumes:
-      - ./logs/nginx:/var/log/nginx
     restart: unless-stopped
     networks:
       - ugc-service-network
@@ -23,8 +21,6 @@ services:
       dockerfile: infra/backend/Dockerfile
     networks:
       - ugc-service-network
-    volumes:
-      - ./logs/ugc_service:/logs
     depends_on:
       ugc-service-redis:
         condition: service_healthy
