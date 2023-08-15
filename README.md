@@ -92,3 +92,38 @@ make up-mongo
 ```bash
 poetry run python3 performance_tests/mongo.py 
 ```
+
+
+# ELK
+
+0) create .env file and change it if you want
+```bash
+cp ./infra/elk/.env.template ./infra/elk/.env
+```
+
+1) run elk
+
+```bash
+make up-elk
+```
+
+2) wait until elk is running
+
+3) go to `http://localhost:5601`
+
+login - `elastic`
+password - `ES_PASSWORD` from .env
+
+# Filebeat
+
+## Description
+Filebeat забирает логи из папки logs/nginx и logs/ugc_service по-умолчанию и передаёт их в logstash elk.
+
+## Launch
+1) run filebeat
+
+```bash
+make up-filebeat
+```
+
+2) check logs in kibana

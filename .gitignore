@@ -136,3 +136,5 @@ movies_admin/static
 
 .env.local
 .vscode
+logs/nginx/*
+logs/ugc_service/*
