@@ -19,4 +19,5 @@ class FavoritesService(FavoritesServiceABC):
         self._favortie_repository = favortie_repository
 
     async def get_favorites_by_user_id(self, user_id: UUID4) -> list[FavoriteMovie]:
+        await self._favortie_repository.get_favorites_by_user_id(user_id)
         return [FavoriteMovie(movie_id=uuid4(), created_at=datetime.now())]
