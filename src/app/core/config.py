@@ -7,14 +7,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # Настройки Mongo
 class MongoConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='mongo_')
-    host: str = Field(default='mongocfg1')
+    host: str = Field(default=...)
     port: int = Field(default=27017)
     username: str = Field(default='default')
     password: str = Field(default='default')
 
     @property
     def dsn(self):
-        return f"mongodb://{self.username}:{self.password}@{self.host}"
+        return f"mongodb://{self.host}:{self.port}"
 
 
 # Настройки Redis
