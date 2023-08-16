@@ -9,25 +9,33 @@ http:
   enabled: true
   host: 0.0.0.0
 
-filebeat.inputs:
-- type: log
-  enabled: true
-  paths:
-    - /var/log/ugc_service/*.json
-  fields:
-    - service: ugc-service
-  tags: ["ugc-service"]
-  json:
-    keys_under_root: true
-    add_error_key: true
-- type: log
-  enabled: true
-  paths:
-    - /var/log/nginx/*.json
-  tags: ["nginx-access"]
-  json:
-    keys_under_root: true
-    add_error_key: true
+filebeat:
+  autodiscover.providers:
+    - type: docker
+      templates:
+        - condition.contains:
+            docker.container.image: ugc-service-nginx
+          config:
+            - module: nginx
+              access:
+                input:
+                  type: container
+                  paths:
+                    - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+                  json.keys_under_root: true
+                  json.keys_under_root: true
+                  tags: ["nginx-access"]
+    - type: docker
+      templates:
+        - condition.contains:
+            docker.container.image: ugc-service-api
+          config:
+            - type: container
+              paths:
+                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+              json.keys_under_root: true
+              json.keys_under_root: true
+              tags: ["ugc-service"]
 
 output.logstash:
   enabled: true
