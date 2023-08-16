@@ -51,7 +51,7 @@ class Action(MongoSchema):
     id: PyObjectId | None = Field(default=None, alias='_id')
     action_type: ActionType
     action_time: int
-    action_data: CommentData | RatingData | ReactionData | None
+    action_data: CommentData | RatingData | ReactionData | None = Field(default=None)
     user_id: str
     film_id: str
 
