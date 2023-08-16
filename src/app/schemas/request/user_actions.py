@@ -30,21 +30,20 @@ class MongoSchema(BaseModel):
     )
 
 
-class ReactionData(MongoSchema):
+class ActionData(MongoSchema):
     parent_type: ActionParent
     parent_id: str
+
+
+class ReactionData(ActionData):
     reaction: ReactionType
 
 
-class RatingData(MongoSchema):
-    parent_type: ActionParent
-    parent_id: str
+class RatingData(ActionData):
     rate: int = Field(ge=1, le=10)
 
 
-class CommentData(MongoSchema):
-    parent_type: ActionParent
-    parent_id: str
+class CommentData(ActionData):
     text: str
 
 
