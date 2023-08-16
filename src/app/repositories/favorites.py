@@ -1,21 +1,25 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
-from typing import Any
-from uuid import uuid4
+from uuid import UUID
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import UUID4
+
+from core.config import MongoConfig
+from schemas.response.favorites import FavoriteMovie
 
 
 class FavoritesRepositoryABC(ABC):
     @abstractmethod
-    async def get_favorites_by_user_id(self, user_id: UUID4) -> list[dict[str, Any]]:
+    async def get_favorites_by_user_id(self, user_id: UUID) -> list[FavoriteMovie]:
         raise NotImplementedError
 
 
 class FavoritesMongoRepository(FavoritesRepositoryABC):
-    def __init__(self, client: AsyncIOMotorClient):
+    def __init__(self, client: AsyncIOMotorClient, config: MongoConfig):
         self._client = client
+        self._db = config.database
+        self._collection = config.collection
 
-    async def get_favorites_by_user_id(self, user_id: UUID4) -> list[dict[str, Any]]:
-        return [{"movie_id": uuid4(), "created_at": datetime.now()}]
+    async def get_favorites_by_user_id(self, user_id: UUID) -> list[FavoriteMovie]:
+        collection = self._client[self._db][self._collection]
+        favorites_cursor = collection.find({"user_id": str(user_id)})
+        return [FavoriteMovie.map_from_mongo(favorite) async for favorite in favorites_cursor]
