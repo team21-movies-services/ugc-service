@@ -49,11 +49,11 @@ class CommentData(ActionData):
 
 class Action(MongoSchema):
     id: PyObjectId | None = Field(default=None, alias='_id')
+    user_id: str
+    film_id: str
     action_type: ActionType
     action_time: int
     action_data: CommentData | RatingData | ReactionData | None = Field(default=None)
-    user_id: str
-    film_id: str
 
     @field_validator('action_data', mode='before')
     def set_action_data_type(cls, action_data, values):
