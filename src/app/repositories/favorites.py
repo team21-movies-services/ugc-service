@@ -4,6 +4,7 @@ from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from core.config import MongoConfig
+from schemas.request.user_actions import ActionType
 from schemas.response.favorites import FavoriteMovie
 
 
@@ -21,5 +22,5 @@ class FavoritesMongoRepository(FavoritesRepositoryABC):
 
     async def get_favorites_by_user_id(self, user_id: UUID) -> list[FavoriteMovie]:
         collection = self._client[self._db][self._collection]
-        favorites_cursor = collection.find({"user_id": str(user_id)})
+        favorites_cursor = collection.find({"user_id": str(user_id), "action_type": ActionType.favorite})
         return [FavoriteMovie.map_from_mongo(favorite) async for favorite in favorites_cursor]
