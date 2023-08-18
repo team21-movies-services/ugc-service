@@ -14,6 +14,9 @@ class MongoConfig(BaseSettings):
     username: str = Field(default='default')
     password: str = Field(default='default')
 
+    database: str = Field(default='film_events')
+    collection: str = Field(default='film_events')
+
     @property
     def dsn(self):
         return f"mongodb://{self.host_1}:{self.port_1},{self.host_2}:{self.port_2}"
