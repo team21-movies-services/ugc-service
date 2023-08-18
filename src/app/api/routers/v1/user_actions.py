@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 from fastapi import APIRouter, Depends
 
@@ -22,8 +21,7 @@ logger = logging.getLogger().getChild('-router')
 async def save_user_action(
     action: Action,
     auth_data: AuthData = Depends(get_auth_data),
-    saver_service: UserActionServiceABC = Depends(),
-) -> Any:
-    result = await saver_service.save_action(action=action)
-    logger.info(result)
+    action_service: UserActionServiceABC = Depends(),
+) -> ActionIdResponse:
+    result = await action_service.save_action(action=action)
     return result
