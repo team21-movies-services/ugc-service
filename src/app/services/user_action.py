@@ -1,18 +1,19 @@
 from abc import ABC, abstractmethod
 
-from repositories.saver import MongoUserActionSaverRepository
+from repositories.user_action import MongoUserActionRepository
 from schemas.request.user_actions import Action
-from schemas.response.user_actions import ActionIdResponse
+from schemas.response.user_action import ActionIdResponse
 
 
-class ActionSaverServiceABC(ABC):
+class UserActionServiceABC(ABC):
     @abstractmethod
     async def save_action(self, action: Action) -> ActionIdResponse:
         """Сохранить действие в хранилище"""
+        raise NotImplementedError
 
 
-class ActionSaverService(ActionSaverServiceABC):
-    def __init__(self, saver_repository: MongoUserActionSaverRepository):
+class UserActionService(UserActionServiceABC):
+    def __init__(self, saver_repository: MongoUserActionRepository):
         self._saver_repository = saver_repository
 
     async def save_action(self, action: Action) -> ActionIdResponse:

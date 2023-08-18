@@ -10,14 +10,14 @@ from core.config import MongoConfig
 from schemas.request.user_actions import Action
 
 
-class ActionSaverRepositoryABC(ABC):
+class UserActionRepository(ABC):
     @abstractmethod
     async def insert_action(self, action: Action):
         """Метод для сохранения действий пользователя в mongodb"""
         pass
 
 
-class MongoUserActionSaverRepository(ActionSaverRepositoryABC):
+class MongoUserActionRepository(UserActionRepository):
     def __init__(self, client: AsyncIOMotorClient, settings: MongoConfig):
         self.client = client
         self.db: AsyncIOMotorDatabase = self.client[settings.database]
