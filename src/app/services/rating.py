@@ -36,5 +36,5 @@ class RatingService(RatingServiceABC):
         return FilmRating(
             count_likes=counters['likes'],
             count_dislikes=counters['dislikes'],
-            average_rating=float(counters['sum'] / counters['count']),
+            average_rating=float("{:.2f}".format(counters['sum'] / counters['count'])),
         )
