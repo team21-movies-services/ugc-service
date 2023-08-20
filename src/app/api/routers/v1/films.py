@@ -1,12 +1,11 @@
-from uuid import UUID
 import logging
+from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
 from dependencies.auth import get_auth_data
 from schemas.domain.auth import AuthData
 from schemas.response.rating import FilmRating
-
 from services.rating import RatingServiceABC
 
 router = APIRouter(prefix='/films', tags=['Films'])

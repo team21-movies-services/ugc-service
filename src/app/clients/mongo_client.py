@@ -1,9 +1,7 @@
-from uuid import UUID
 from typing import Optional
+from uuid import UUID
 
 from motor.motor_asyncio import AsyncIOMotorClient
-
-from schemas.request.user_actions import ActionType
 
 from core.config import MongoConfig
 

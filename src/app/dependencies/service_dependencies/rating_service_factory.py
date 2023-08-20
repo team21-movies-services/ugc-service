@@ -1,12 +1,10 @@
 from fastapi import Depends
 
-from dependencies.registrator import add_factory_to_mapper
-
-from repositories.rating import RatingMongoRepository
-from services.rating import RatingServiceABC, RatingService
-
 from clients.mongo_client import AsyncMongoClient
 from dependencies.clients.mongo import get_async_mongo_client
+from dependencies.registrator import add_factory_to_mapper
+from repositories.rating import RatingMongoRepository
+from services.rating import RatingService, RatingServiceABC
 
 
 @add_factory_to_mapper(RatingServiceABC)

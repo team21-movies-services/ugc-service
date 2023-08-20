@@ -1,6 +1,6 @@
 import logging
-from collections import defaultdict
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from uuid import UUID
 
 from repositories.rating import RatingRepositoryABC
@@ -24,7 +24,7 @@ class RatingService(RatingServiceABC):
         rates = await self._rating_repository.get_film_rates(film_id)
         logger.info(f"Get list of rates by film_id=[{film_id}] from repository = {rates}")
 
-        counters = defaultdict(int)
+        counters: dict[str, int] = defaultdict(int)
         async for rate in rates:
             if rate == 10:
                 counters['likes'] += 1

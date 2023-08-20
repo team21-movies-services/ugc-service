@@ -1,9 +1,8 @@
-from typing import AsyncGenerator
 from abc import ABC, abstractmethod
+from typing import AsyncGenerator
 from uuid import UUID
 
 from clients.mongo_client import AsyncMongoClient
-
 from schemas.request.user_actions import ActionType
 
 
