@@ -40,7 +40,7 @@ class ReactionData(ActionData):
 
 
 class RatingData(ActionData):
-    rate: int = Field(ge=1, le=10)
+    rate: int = Field(ge=0, le=10)
 
 
 class CommentData(ActionData):
