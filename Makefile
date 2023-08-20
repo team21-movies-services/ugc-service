@@ -1,3 +1,12 @@
+
+BASE_DOCKER_COMPOSES = -f docker-compose.yml -f docker-compose.override.yml
+
+# TODO: clickhouse to
+LOCAL_DOCKER_COMPOSES = -f docker-compose.local.yml \
+	-f docker-compose.mongo.yml \
+	-f docker-compose.kafka.yml \
+	-f docker-compose.override.yml
+
 .PHONY: help
 help: ## Help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -d | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -6,84 +15,64 @@ create_network:
 	@docker network create ugc-service-network 2>/dev/null || echo "ugc-service-network is up-to-date"
 	@docker network create movies-elk-network 2>/dev/null || echo "movies-elk-network is up-to-date"
 
+
 # prod start
 .PHONY: up
 up: create_network ## up services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.yml up -d
+	@docker-compose $(BASE_DOCKER_COMPOSES) up -d
 
 .PHONY: logs
 logs: ## tail logs services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.yml logs -n 1000 -f
+	@docker-compose $(BASE_DOCKER_COMPOSES) logs -n 1000 -f
 
 .PHONY: down
 down: ## down services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.yml down
+	@docker-compose $(BASE_DOCKER_COMPOSES) down
 
 .PHONY: build
 build: ## build services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.yml build
+	@docker-compose $(BASE_DOCKER_COMPOSES) build
 
 .PHONY: restart
 restart: down up ## restart services
 
 .PHONY: uninstall
 uninstall: ## uninstall all services
-	@docker-compose -f docker-compose.override.yml -f docker-compose.yml down --remove-orphans --volumes
+	@docker-compose $(BASE_DOCKER_COMPOSES) down --remove-orphans --volumes
 # prod end
 
 # local start
 
 .PHONY: up-local
 up-local: create_network ## up local services
-	@docker-compose \
-	-f docker-compose.local.yml \
-	-f docker-compose.mongo.yml \
-	-f docker-compose.kafka.yml \
-	-f docker-compose.override.yml \
-	up --build
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) up --build
+
+.PHONY: up-local-d
+up-local-d: create_network ## up all local services in daemon mode
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) up --build -d
 
 .PHONY: down-local
 down-local: ## down local services
-	@docker-compose \
-	-f docker-compose.local.yml \
-	-f docker-compose.kafka.yml \
-	-f docker-compose.override.yml \
-	down
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) down
 
 .PHONY: build-local
 build-local: ## build local services
-	@docker-compose \
-	-f docker-compose.local.yml \
-	-f docker-compose.kafka.yml \
-	-f docker-compose.override.yml \
-	build --force-rm
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) build --force-rm
 
 .PHONY: build-force-local
 build-force-local: ## build force services
-	@docker-compose \
-	-f docker-compose.local.yml \
-	-f docker-compose.kafka.yml \
-	-f docker-compose.override.yml \
-	build --no-cache
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) build --no-cache
 
 .PHONY: logs-local
 logs-local: ## logs local services
-	@docker-compose \
-	-f docker-compose.local.yml \
-	-f docker-compose.kafka.yml \
-	-f docker-compose.override.yml \
-	logs -f
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) logs -f $(serv)
 
 .PHONY: restart-local
 restart-local: down-local up-local ## logs local services
 
 .PHONY: uninstall-local
 uninstall-local: ## uninstall local services
-	@docker-compose \
-	-f docker-compose.override.yml \
-	-f docker-compose.local.yml \
-	-f docker-compose.kafka.yml \
-	down --remove-orphans --volumes
+	@docker-compose $(LOCAL_DOCKER_COMPOSES) down --remove-orphans --volumes
 
 # local end
 

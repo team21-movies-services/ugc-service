@@ -12,8 +12,8 @@ class FavoritesServiceABC(ABC):
 
 
 class FavoritesService(FavoritesServiceABC):
-    def __init__(self, favortie_repository: FavoritesRepositoryABC):
-        self._favortie_repository = favortie_repository
+    def __init__(self, favorite_repository: FavoritesRepositoryABC):
+        self._favorite_repository = favorite_repository
 
     async def get_favorites_by_user_id(self, user_id: UUID) -> list[FavoriteMovie]:
-        return await self._favortie_repository.get_favorites_by_user_id(user_id)
+        return await self._favorite_repository.get_favorites_by_user_id(user_id)
