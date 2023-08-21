@@ -25,7 +25,6 @@ async def get_film_reviews_by_id(
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
 ) -> list[FilmReview]:
-
     return await reviews_service.get_reviews_by_film_id(film_id=film_id,
                                                         sort_by_data=sort_by_data,
                                                         sort_by_rating=sort_by_rating)
@@ -42,7 +41,6 @@ async def get_film_reviews_by_user(
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
 ) -> list[FilmReview]:
-
     return await reviews_service.get_reviews_by_user_id(user_id=auth_data.user_id,
                                                         sort_by_data=sort_by_data,
                                                         sort_by_rating=sort_by_rating)
