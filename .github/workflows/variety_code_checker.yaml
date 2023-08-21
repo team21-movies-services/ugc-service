@@ -39,7 +39,7 @@ jobs:
         poetry run flake8 ./src --format=html > flake-report.html
         mkdir -p flake-reports
         mv flake-report.html flake-reports/
-        poetry run mypy ./src
+        poetry run mypy ./src --show-error-context
 
     - name: "Запуск линтеров: black, isort"
       run: |
