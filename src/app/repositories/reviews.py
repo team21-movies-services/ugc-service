@@ -79,7 +79,8 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
         for review in reviews:
             film_rating_by_user = await self._get_users_film_rating(
-                user_id=review['user_id'], film_id=review['film_id']
+                user_id=review['user_id'],
+                film_id=review['film_id'],
             )
             reactions = await self._get_review_rating(review_id=str(review['_id']))
 
@@ -99,7 +100,8 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
         for review in reviews:
             film_rating_by_user = await self._get_users_film_rating(
-                user_id=review['user_id'], film_id=review['film_id']
+                user_id=review['user_id'],
+                film_id=review['film_id'],
             )
             reactions = await self._get_review_rating(review_id=str(review['_id']))
 

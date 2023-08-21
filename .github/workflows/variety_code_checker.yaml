@@ -25,7 +25,6 @@ jobs:
     - name: Установка Poetry
       uses: snok/install-poetry@v1
       with:
-        version: 1.5.1
         virtualenvs-create: true
         virtualenvs-in-project: true
         installer-parallel: true
@@ -39,7 +38,7 @@ jobs:
         poetry run flake8 ./src --format=html > flake-report.html
         mkdir -p flake-reports
         mv flake-report.html flake-reports/
-        poetry run mypy ./src --show-error-context
+        poetry run mypy ./src
 
     - name: "Запуск линтеров: black, isort"
       run: |
