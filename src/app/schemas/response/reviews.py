@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any
 
 from pydantic import UUID4, BaseModel
 
@@ -14,7 +14,7 @@ class FilmReview(BaseModel):
     reactions: dict[str, int]
 
     @classmethod
-    def map_review_from_mongo(cls, review: Mapping[str, Any]) -> 'FilmReview':
+    def map_review_from_mongo(cls, review: dict[str, Any]) -> 'FilmReview':
         film_id = review.get("film_id")
         user_id = review.get("user_id")
         action_time = review.get("action_time")
