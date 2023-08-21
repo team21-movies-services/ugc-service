@@ -78,12 +78,12 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         reviews = [review async for review in reviews_cursor]
 
         for review in reviews:
-            review['film_rating_by_user'] = await self._get_users_film_rating(
+            review.update({'film_rating_by_user': await self._get_users_film_rating(
                 user_id=review['user_id'],
                 film_id=review['film_id'],
-            )
-            review['reactions'] = await self._get_review_rating(
-                review_id=str(review['_id']),
+            )})
+            review.update({'reactions': await self._get_review_rating(
+                review_id=str(review['_id']))},
             )
 
         return [FilmReview.map_review_from_mongo(review) for review in reviews]
@@ -97,12 +97,12 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         reviews = [review async for review in reviews_cursor]
 
         for review in reviews:
-            review['film_rating_by_user'] = await self._get_users_film_rating(
+            review.update({'film_rating_by_user': await self._get_users_film_rating(
                 user_id=review['user_id'],
                 film_id=review['film_id'],
-            )
-            review['reactions'] = await self._get_review_rating(
-                review_id=str(review['_id']),
+            )})
+            review.update({'reactions': await self._get_review_rating(
+                review_id=str(review['_id']))},
             )
 
         return [FilmReview.map_review_from_mongo(review) for review in reviews]
