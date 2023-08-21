@@ -198,7 +198,7 @@ uninstall-filebeat:
 
 # FILEBEAT end
 
-# test postgres start
+# perfomance test start
 
 .PHONY: test-up-postgres
 test-up-postgres: create_network
@@ -214,4 +214,13 @@ run-test-postgres: create_network
 	@docker-compose -f ./performance_tests/read_operations/docker.compose.postgres.yml run --rm run-postgres-test-perf
 
 
-# postgres end
+.PHONY: test-up-mongo
+test-up-mongo: create_network
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.mongo.yml up --build
+
+.PHONY: test-uninstall-mongo
+test-uninstall-mongo:
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.mongo.yml down --remove-orphans --volumes
+
+
+# perfomance test end
