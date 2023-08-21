@@ -11,7 +11,7 @@ class FilmReview(BaseModel):
     action_time: int
     text: str
     film_rating_by_user: int | None
-    reactions: Any | None
+    reactions: dict | None
 
     @classmethod
     def map_review_from_mongo(cls, review: Mapping[str, Any]) -> 'FilmReview':

@@ -76,6 +76,7 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         reviews_cursor = collection.find({"film_id": str(film_id), "action_type": ActionType.comment})
 
         reviews = [review async for review in reviews_cursor]
+        all_data_reviews = []
 
         for review in reviews:
             film_rating_by_user = await self._get_users_film_rating(
@@ -89,14 +90,16 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
                 'film_rating_by_user': film_rating_by_user,
                 "reactions": reactions,
             }
+            all_data_reviews.append(review)
 
-        return [FilmReview.map_review_from_mongo(review) for review in reviews]
+        return [FilmReview.map_review_from_mongo(review) for review in all_data_reviews]
 
     async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[FilmReview]:
         collection = self._client[self._db][self._collection]
         reviews_cursor = collection.find({"user_id": str(user_id), "action_type": ActionType.comment})
 
         reviews = [review async for review in reviews_cursor]
+        all_data_reviews = []
 
         for review in reviews:
             film_rating_by_user = await self._get_users_film_rating(
@@ -110,5 +113,6 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
                 'film_rating_by_user': film_rating_by_user,
                 "reactions": reactions,
             }
+            all_data_reviews.append(review)
 
-        return [FilmReview.map_review_from_mongo(review) for review in reviews]
+        return [FilmReview.map_review_from_mongo(review) for review in all_data_reviews]
