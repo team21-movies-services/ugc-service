@@ -1,8 +1,6 @@
 from pydantic import UUID4, BaseModel
 
-from schemas.utils import PyObjectId
-
 
 class ActionIdResponse(BaseModel):
-    action_id: PyObjectId
+    action_id: str
     user_id: UUID4
