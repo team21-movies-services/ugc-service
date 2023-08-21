@@ -39,10 +39,9 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         """Получение оценки конкретного фильма конкретным юзером"""
 
         collection = self._client[self._db][self._collection]
-        film_rating = collection.find({
-            "film_id": str(film_id),
-            "user_id": str(user_id),
-            "action_type": ActionType.rating})
+        film_rating = collection.find(
+            {"film_id": str(film_id), "user_id": str(user_id), "action_type": ActionType.rating},
+        )
 
         result = [rating async for rating in film_rating]
 
@@ -55,9 +54,12 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         """Получение рейтинга рецензии на основе лайков/дизлайков"""
 
         collection = self._client[self._db][self._collection]
-        reactions = [reaction async for reaction in collection.find({
-            "action_type": ActionType.reaction,
-            "action_data.parent_id": review_id})]
+        reactions = [
+            reaction
+            async for reaction in collection.find(
+                {"action_type": ActionType.reaction, "action_data.parent_id": review_id},
+            )
+        ]
 
         counters: dict[str, int] = defaultdict(int)
         for reaction in reactions:
@@ -71,38 +73,40 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
     async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[FilmReview]:
         collection = self._client[self._db][self._collection]
-        reviews_cursor = collection.find({
-            "film_id": str(film_id),
-            "action_type": ActionType.comment})
+        reviews_cursor = collection.find({"film_id": str(film_id), "action_type": ActionType.comment})
 
         reviews = [review async for review in reviews_cursor]
 
         for review in reviews:
-            review.update({'film_rating_by_user': await self._get_users_film_rating(
-                user_id=review['user_id'],
-                film_id=review['film_id'],
-            )})
-            review.update({'reactions': await self._get_review_rating(
-                review_id=str(review['_id']))},
+            film_rating_by_user = await self._get_users_film_rating(
+                user_id=review['user_id'], film_id=review['film_id']
             )
+            reactions = await self._get_review_rating(review_id=str(review['_id']))
+
+            review = {
+                **review,
+                'film_rating_by_user': film_rating_by_user,
+                "reactions": reactions,
+            }
 
         return [FilmReview.map_review_from_mongo(review) for review in reviews]
 
     async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[FilmReview]:
         collection = self._client[self._db][self._collection]
-        reviews_cursor = collection.find({
-            "user_id": str(user_id),
-            "action_type": ActionType.comment})
+        reviews_cursor = collection.find({"user_id": str(user_id), "action_type": ActionType.comment})
 
         reviews = [review async for review in reviews_cursor]
 
         for review in reviews:
-            review.update({'film_rating_by_user': await self._get_users_film_rating(
-                user_id=review['user_id'],
-                film_id=review['film_id'],
-            )})
-            review.update({'reactions': await self._get_review_rating(
-                review_id=str(review['_id']))},
+            film_rating_by_user = await self._get_users_film_rating(
+                user_id=review['user_id'], film_id=review['film_id']
             )
+            reactions = await self._get_review_rating(review_id=str(review['_id']))
+
+            review = {
+                **review,
+                'film_rating_by_user': film_rating_by_user,
+                "reactions": reactions,
+            }
 
         return [FilmReview.map_review_from_mongo(review) for review in reviews]

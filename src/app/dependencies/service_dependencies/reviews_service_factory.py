@@ -11,9 +11,9 @@ from services.reviews import ReviewsService, ReviewsServiseABC
 
 @add_factory_to_mapper(ReviewsServiseABC)
 def create_reviews_service(
-        mongo_client: AsyncIOMotorClient = Depends(get_mongo_client),
-        settings: Settings = Depends(get_settings)) -> ReviewsService:
-
+    mongo_client: AsyncIOMotorClient = Depends(get_mongo_client),
+    settings: Settings = Depends(get_settings),
+) -> ReviewsService:
     reviews_repository = ReviewsMongoRepository(mongo_client, settings.mongo)
 
     return ReviewsService(reviews_repository)

@@ -25,9 +25,11 @@ class FilmReview(BaseModel):
         if not film_id or not action_time or not user_id or not action_data:
             raise BadCollectionResponseException
 
-        return FilmReview(film_id=film_id,
-                          user_id=user_id,
-                          action_time=action_time,
-                          text=action_data["text"],
-                          film_rating_by_user=film_rating_by_user,
-                          reactions=reactions)
+        return FilmReview(
+            film_id=film_id,
+            user_id=user_id,
+            action_time=action_time,
+            text=action_data["text"],
+            film_rating_by_user=film_rating_by_user,
+            reactions=reactions,
+        )
