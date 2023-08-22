@@ -197,3 +197,30 @@ uninstall-filebeat:
 	@docker-compose --project-directory . -p ugc-service -f infra/filebeat/docker-compose.filebeat.yml down
 
 # FILEBEAT end
+
+# perfomance test start
+
+.PHONY: test-up-postgres
+test-up-postgres: create_network
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.postgres.yml up --build
+
+.PHONY: test-uninstall-postgres
+test-uninstall-postgres:
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.postgres.yml down --remove-orphans --volumes
+
+
+.PHONY: run-test-postgres
+run-test-postgres: create_network
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.postgres.yml run --rm run-postgres-test-perf
+
+
+.PHONY: test-up-mongo
+test-up-mongo: create_network
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.mongo.yml up --build
+
+.PHONY: test-uninstall-mongo
+test-uninstall-mongo:
+	@docker-compose -f ./performance_tests/read_operations/docker.compose.mongo.yml down --remove-orphans --volumes
+
+
+# perfomance test end
