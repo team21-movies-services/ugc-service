@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+
+  test-ugc-service-api:
+    container_name: test-ugc-service-api
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: infra/backend_test/Dockerfile
+    networks:
+      - test-ugc-service-network
+    depends_on:
+      test-ugc-service-redis:
+        condition: service_healthy
+      test-ugc-service-mongo:
+        condition: service_healthy
+    environment:
+      MONGO_HOST: "test-ugc-service-mongo"
+      MONGO_PORT: "27017"
+      REDIS_HOST: "test-ugc-service-redis"
+      REDIS_PORT: "6379"
+      SENTRY_ENABLE: "False"
+    command: poetry run pytest
+
+  test-ugc-service-redis:
+    container_name: test-ugc-service-redis
+    image: redis:7.0.8-alpine
+    restart: unless-stopped
+    networks:
+      - test-ugc-service-network
+    healthcheck:
+      test: redis-cli ping >/dev/null || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  test-ugc-service-mongo:
+    image: mongo:7.0.0-rc8
+    container_name: test-ugc-service-mongo
+    restart: always
+    networks:
+      - test-ugc-service-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  test-ugc-service-network:
+    name: test-ugc-service-network
+    external: true

@@ -30,12 +30,12 @@ class RedisConfig(BaseSettings):
 
 # Настройки Kafka
 class KafkaConfig(BaseSettings):
-    host: str = Field(default=..., alias='KAFKA_HOST')
+    host: str = Field(default="localhost", alias='KAFKA_HOST')
 
 
 # Настройки Sentry
 class SentryConfig(BaseSettings):
-    dsn: str = Field(default=..., alias='SENTRY_DSN')
+    dsn: str = Field(default="dsn", alias='SENTRY_DSN')
     enable: bool = Field(default=True, alias='SENTRY_ENABLE')
 
 
@@ -43,7 +43,7 @@ class SentryConfig(BaseSettings):
 class ProjectConfig(BaseSettings):
     name: str = Field(default='ugc_service_api', alias='PROJECT_NAME')
     log_level: str = Field(default='INFO', alias='LOG_LEVEL')
-    jwt_secret_key: str = Field(default=..., alias='JWT_SECRET_KEY')
+    jwt_secret_key: str = Field(default="secret_key", alias='JWT_SECRET_KEY')
 
 
 class Settings(BaseSettings):
