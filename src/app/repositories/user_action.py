@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from typing import assert_never
 
 from motor.motor_asyncio import (
     AsyncIOMotorClient,
@@ -97,8 +98,8 @@ class MongoUserActionRepository(UserActionRepository):
                 _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": delete_info.parent_id})
             case FavoriteFilterRequest():  # type: ignore[misc]
                 _filter.update(delete_info.model_dump(by_alias=True))
-            case _:
-                raise NotImplementedError("Deleting for {} not implemented".format(type(delete_info)))
+            case _ as unreachable:
+                assert_never(unreachable)
         logger.info("Deleting action with query: {}".format(_filter))
         try:
             result: DeleteResult = await self.collection.delete_one(_filter)
@@ -128,8 +129,8 @@ class MongoUserActionRepository(UserActionRepository):
                     "parent_id": update_info.parent_id,
                 }
                 new_value = {"action_data.rate": update_info.rate}
-            case _:
-                raise NotImplementedError("Updating for {} not implemented".format(type(update_info)))
+            case _ as unreachable:
+                assert_never(unreachable)
 
         logger.info("Updating action with filter {0} and set {1}".format(_filter, new_value))
         try:

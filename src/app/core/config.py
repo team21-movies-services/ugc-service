@@ -19,7 +19,7 @@ class MongoConfig(BaseSettings):
 
     @property
     def dsn(self):
-        return f"mongodb://{self.host_1}:{self.port_1},{self.host_2}:{self.port_2}"
+        return f"mongodb://{self.host_1}:{self.port_1},{self.host_2}:{self.port_2}/?uuidRepresentation=standard"
 
 
 # Настройки Redis

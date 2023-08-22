@@ -17,10 +17,12 @@ class UserActionServiceABC(ABC):
     @abstractmethod
     async def delete_action(self, delete_info) -> int:
         """Удалить действие из хранилища"""
+        raise NotImplementedError
 
     @abstractmethod
     async def update_action(self, update_info):
         """Изменить действие"""
+        raise NotImplementedError
 
 
 class UserActionService(UserActionServiceABC):
