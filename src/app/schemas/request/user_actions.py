@@ -1,7 +1,7 @@
 from enum import IntEnum, StrEnum, auto
 from typing import Literal, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import UUID4, BaseModel, ConfigDict, Field, field_validator
 
 from schemas.utils import PyObjectId
 
@@ -33,7 +33,7 @@ class MongoSchema(BaseModel):
 
 class ActionData(MongoSchema):
     parent_type: ActionParent
-    parent_id: PyObjectId | str
+    parent_id: UUID4 | PyObjectId
 
 
 class ReactionData(ActionData):
@@ -50,8 +50,8 @@ class CommentData(ActionData):
 
 class Action(MongoSchema):
     id: PyObjectId | None = Field(default=None, alias='_id')
-    user_id: str
-    film_id: str
+    user_id: UUID4
+    film_id: UUID4
     action_type: ActionType
     action_time: int
     action_data: CommentData | RatingData | ReactionData | None = Field(default=None)
@@ -70,8 +70,8 @@ class Action(MongoSchema):
 
 
 class ActionCreateRequest(MongoSchema):
-    user_id: str
-    film_id: str
+    user_id: UUID4
+    film_id: UUID4
     action_type: ActionType
     action_time: int
     action_data: CommentData | RatingData | ReactionData | None = Field(default=None)
@@ -89,42 +89,42 @@ class ActionCreateRequest(MongoSchema):
         return action_data
 
 
-class CommentFilterRequest(BaseModel):
+class CommentFilterRequest(MongoSchema):
     action_type: Literal[ActionType.comment]
     id: PyObjectId = Field(alias="_id")
 
 
-class FavoriteFilterRequest(BaseModel):
+class FavoriteFilterRequest(MongoSchema):
     action_type: Literal[ActionType.favorite]
-    user_id: str
-    film_id: str
+    user_id: UUID4
+    film_id: UUID4
 
 
-class ReactionFilterRequest(BaseModel):
+class ReactionFilterRequest(MongoSchema):
     action_type: Literal[ActionType.reaction]
-    user_id: str
-    parent_id: PyObjectId | str
+    user_id: UUID4
+    parent_id: PyObjectId | UUID4 = Field(alias="action_data.parent_id")
 
 
-class RatingFilterRequest(BaseModel):
+class RatingFilterRequest(MongoSchema):
     action_type: Literal[ActionType.rating]
-    user_id: str
-    parent_id: PyObjectId | str
+    user_id: UUID4
+    parent_id: PyObjectId | UUID4 = Field(alias="action_data.parent_id")
 
 
 FilterRequest = Union[CommentFilterRequest, FavoriteFilterRequest, ReactionFilterRequest, RatingFilterRequest]
 
 
 class CommentUpdateRequest(CommentFilterRequest):
-    text: str
+    text: str = Field(alias="action_data.text")
 
 
 class ReactionUpdateRequest(ReactionFilterRequest):
-    reaction: ReactionType
+    reaction: ReactionType = Field(alias="action_data.reaction")
 
 
 class RatingUpdateRequest(RatingFilterRequest):
-    rate: int = Field(ge=0, le=10)
+    rate: int = Field(ge=0, le=10, alias="action_data.rate")
 
 
 UpdateInfo = Union[RatingUpdateRequest, CommentUpdateRequest, ReactionUpdateRequest]

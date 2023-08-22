@@ -28,7 +28,7 @@ async def save_user_action(
     return result
 
 
-@router.delete('/', summary="Удалить действие пользователя", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('', summary="Удалить действие пользователя", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_action(
     delete_info: FilterRequest,
     action_service: UserActionServiceABC = Depends(),
@@ -40,7 +40,7 @@ async def delete_user_action(
 
 
 @router.patch(
-    '/',
+    '',
     summary="Изменить действие пользователя",
     status_code=status.HTTP_200_OK,
 )

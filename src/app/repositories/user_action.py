@@ -14,13 +14,9 @@ from core.config import MongoConfig
 from schemas.request.user_actions import (
     Action,
     ActionCreateRequest,
-    CommentFilterRequest,
     CommentUpdateRequest,
-    FavoriteFilterRequest,
     FilterRequest,
-    RatingFilterRequest,
     RatingUpdateRequest,
-    ReactionFilterRequest,
     ReactionUpdateRequest,
     UpdateInfo,
 )
@@ -79,7 +75,7 @@ class MongoUserActionRepository(UserActionRepository):
         self.collection: AsyncIOMotorCollection = self.db[settings.collection]
 
     async def insert_action(self, action: ActionCreateRequest) -> str | None:
-        insert_data = action.model_dump(by_alias=True, exclude_none=True)
+        insert_data = action.model_dump(by_alias=True, exclude_none=True, mode='json')
         try:
             result: InsertOneResult = await self.collection.insert_one(insert_data)
             return str(result.inserted_id)
@@ -88,18 +84,7 @@ class MongoUserActionRepository(UserActionRepository):
         return None
 
     async def delete_action(self, delete_info: FilterRequest) -> bool:
-        _filter = {"action_type": delete_info.action_type}
-        match delete_info:
-            case CommentFilterRequest():  # type: ignore[misc]
-                _filter.update({"_id": delete_info.id})
-            case ReactionFilterRequest():  # type: ignore[misc]
-                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": delete_info.parent_id})
-            case RatingFilterRequest():  # type: ignore[misc]
-                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": delete_info.parent_id})
-            case FavoriteFilterRequest():  # type: ignore[misc]
-                _filter.update(delete_info.model_dump(by_alias=True))
-            case _ as unreachable:
-                assert_never(unreachable)
+        _filter = delete_info.model_dump(by_alias=True, mode="json")
         logger.info("Deleting action with query: {}".format(_filter))
         try:
             result: DeleteResult = await self.collection.delete_one(_filter)
@@ -135,10 +120,12 @@ class MongoUserActionRepository(UserActionRepository):
         logger.info("Updating action with filter {0} and set {1}".format(_filter, new_value))
         try:
             result: UpdateResult = await self.collection.update_one(filter=_filter, update={"$set": new_value})
-            if result.modified_count == 1:
+            if result.matched_count == 1:
                 logger.info("Updated action with filter {0} and set {1}".format(_filter, new_value))
                 return True
-
+            if result.modified_count == 1:
+                logger.info("No changes fixed for matched results")
+                return True
         except PyMongoError as e:
             logger.error("Error occurred during update operation: {}".format(str(e)))
         return False
