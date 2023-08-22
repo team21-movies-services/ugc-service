@@ -239,7 +239,7 @@ down-test: ## down test services
 
 .PHONY: run-test
 run-test: create_test_network ## run and uninstall tests services
-	@docker-compose -p test_ugc_service -f docker-compose.test.yml up --abort-on-container-exit
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml up --build --abort-on-container-exit
 
 .PHONY: build-test
 build-test: create_test_network
