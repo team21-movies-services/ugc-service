@@ -19,7 +19,7 @@ async def mongo_client_fixture(settings):
 
 
 @pytest_asyncio.fixture(name='mongo_collection', autouse=True)
-async def clean_mongo_collection(mongo_client: AsyncIOMotorClient, settings: Settings):
+async def get_mongo_collection(mongo_client: AsyncIOMotorClient, settings: Settings):
     collection = mongo_client[settings.mongo.database][settings.mongo.collection]
     yield collection
     await collection.delete_many({})
