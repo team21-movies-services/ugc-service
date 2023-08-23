@@ -14,5 +14,5 @@ def create_user_action_service(
     mongo_client: AsyncIOMotorClient = Depends(get_mongo_client),
     settings: Settings = Depends(get_settings),
 ) -> UserActionService:
-    repository = MongoUserActionRepository(mongo_client, settings.mongo)
+    repository = MongoUserActionRepository(mongo_client, settings)
     return UserActionService(repository)

@@ -89,24 +89,24 @@ class ActionCreateRequest(MongoSchema):
         return action_data
 
 
-class CommentFilterRequest(BaseModel):
+class CommentFilterRequest(MongoSchema):
     action_type: Literal[ActionType.comment]
     id: PyObjectId = Field(alias="_id")
 
 
-class FavoriteFilterRequest(BaseModel):
+class FavoriteFilterRequest(MongoSchema):
     action_type: Literal[ActionType.favorite]
     user_id: str
     film_id: str
 
 
-class ReactionFilterRequest(BaseModel):
+class ReactionFilterRequest(MongoSchema):
     action_type: Literal[ActionType.reaction]
     user_id: str
     parent_id: PyObjectId | str
 
 
-class RatingFilterRequest(BaseModel):
+class RatingFilterRequest(MongoSchema):
     action_type: Literal[ActionType.rating]
     user_id: str
     parent_id: PyObjectId | str
