@@ -45,11 +45,11 @@ async def delete_user_action(
     status_code=status.HTTP_200_OK,
 )
 async def update_user_action(
-    delete_info: UpdateInfo,
+    update_info: UpdateInfo,
     action_service: UserActionServiceABC = Depends(),
     auth_data: AuthData = Depends(get_auth_data),
 ) -> bool:
-    result = await action_service.update_action(update_info=delete_info)
+    result = await action_service.update_action(update_info=update_info)
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Action not found')
 
