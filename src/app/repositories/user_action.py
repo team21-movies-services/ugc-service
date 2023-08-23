@@ -10,7 +10,7 @@ from motor.motor_asyncio import (
 from pymongo.errors import PyMongoError
 from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
 
-from core.config import MongoConfig
+from core.config import Settings
 from schemas.request.user_actions import (
     Action,
     ActionCreateRequest,
@@ -73,10 +73,10 @@ class UserActionRepository(ABC):
 
 
 class MongoUserActionRepository(UserActionRepository):
-    def __init__(self, client: AsyncIOMotorClient, settings: MongoConfig):
+    def __init__(self, client: AsyncIOMotorClient, settings: Settings):
         self.client = client
-        self.db: AsyncIOMotorDatabase = self.client[settings.database]
-        self.collection: AsyncIOMotorCollection = self.db[settings.collection]
+        self.db: AsyncIOMotorDatabase = self.client[settings.mongo.database]
+        self.collection: AsyncIOMotorCollection = self.db[settings.mongo.collection]
 
     async def insert_action(self, action: ActionCreateRequest) -> str | None:
         insert_data = action.model_dump(by_alias=True, exclude_none=True)
@@ -93,9 +93,9 @@ class MongoUserActionRepository(UserActionRepository):
             case CommentFilterRequest():  # type: ignore[misc]
                 _filter.update({"_id": delete_info.id})
             case ReactionFilterRequest():  # type: ignore[misc]
-                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": delete_info.parent_id})
+                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": str(delete_info.parent_id)})
             case RatingFilterRequest():  # type: ignore[misc]
-                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": delete_info.parent_id})
+                _filter.update({"user_id": delete_info.user_id, "action_data.parent_id": str(delete_info.parent_id)})
             case FavoriteFilterRequest():  # type: ignore[misc]
                 _filter.update(delete_info.model_dump(by_alias=True))
             case _ as unreachable:
@@ -119,14 +119,14 @@ class MongoUserActionRepository(UserActionRepository):
                 _filter = {
                     "action_type": update_info.action_type,
                     "user_id": update_info.user_id,
-                    "action_data.parent_id": update_info.parent_id,
+                    "action_data.parent_id": str(update_info.parent_id),
                 }
                 new_value = {"action_data.reaction": update_info.reaction}
             case RatingUpdateRequest():  # type: ignore[misc]
                 _filter = {
                     "action_type": update_info.action_type,
                     "user_id": update_info.user_id,
-                    "parent_id": update_info.parent_id,
+                    "action_data.parent_id": str(update_info.parent_id),
                 }
                 new_value = {"action_data.rate": update_info.rate}
             case _ as unreachable:
@@ -135,6 +135,8 @@ class MongoUserActionRepository(UserActionRepository):
         logger.info("Updating action with filter {0} and set {1}".format(_filter, new_value))
         try:
             result: UpdateResult = await self.collection.update_one(filter=_filter, update={"$set": new_value})
+            if result.matched_count == 1:
+                logger.info("One match with filter {0}")
             if result.modified_count == 1:
                 logger.info("Updated action with filter {0} and set {1}".format(_filter, new_value))
                 return True
