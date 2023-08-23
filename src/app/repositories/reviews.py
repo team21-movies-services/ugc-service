@@ -1,31 +1,31 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from typing import Any, Mapping
 from uuid import UUID
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from core.config import MongoConfig
 from schemas.request.user_actions import ActionType
-from schemas.response.reviews import FilmReview
 
 
 class ReviewsRepositoryABC(ABC):
     @abstractmethod
-    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[FilmReview]:
+    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[Mapping[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod
-    async def _get_users_film_rating(self, user_id: UUID, film_id: UUID) -> int | None:
+    async def get_users_film_rating(self, user_id: UUID, film_id: UUID) -> int | None:
         """Получение оценки конкретного фильма конкретным юзером"""
         raise NotImplementedError
 
     @abstractmethod
-    async def _get_review_rating(self, review_id: str) -> dict[str, int]:
+    async def get_review_rating(self, review_id: str) -> dict[str, int]:
         """Получение рейтинга рецензии на основе лайков/дизлайков"""
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[FilmReview]:
+    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[Mapping[str, Any]]:
         raise NotImplementedError
 
 
@@ -35,7 +35,7 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
         self._db = config.database
         self._collection = config.collection
 
-    async def _get_users_film_rating(self, user_id: UUID, film_id: UUID) -> int | None:
+    async def get_users_film_rating(self, user_id: UUID, film_id: UUID) -> int | None:
         """Получение оценки конкретного фильма конкретным юзером"""
 
         collection = self._client[self._db][self._collection]
@@ -50,7 +50,7 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
         return result[0]['action_data']['rate']
 
-    async def _get_review_rating(self, review_id: str) -> dict[str, int]:
+    async def get_review_rating(self, review_id: str) -> dict[str, int]:
         """Получение рейтинга рецензии на основе лайков/дизлайков"""
 
         collection = self._client[self._db][self._collection]
@@ -71,48 +71,14 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
         return counters
 
-    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[FilmReview]:
+    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[Mapping[str, Any]]:
         collection = self._client[self._db][self._collection]
         reviews_cursor = collection.find({"film_id": str(film_id), "action_type": ActionType.comment})
 
-        reviews = [review async for review in reviews_cursor]
-        all_data_reviews = []
+        return [review async for review in reviews_cursor]
 
-        for review in reviews:
-            film_rating_by_user = await self._get_users_film_rating(
-                user_id=review['user_id'],
-                film_id=review['film_id'],
-            )
-            reactions = await self._get_review_rating(review_id=str(review['_id']))
-
-            review = {
-                **review,
-                'film_rating_by_user': film_rating_by_user,
-                "reactions": reactions,
-            }
-            all_data_reviews.append(review)
-
-        return [FilmReview.map_review_from_mongo(review) for review in all_data_reviews]
-
-    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[FilmReview]:
+    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[Mapping[str, Any]]:
         collection = self._client[self._db][self._collection]
         reviews_cursor = collection.find({"user_id": str(user_id), "action_type": ActionType.comment})
 
-        reviews = [review async for review in reviews_cursor]
-        all_data_reviews = []
-
-        for review in reviews:
-            film_rating_by_user = await self._get_users_film_rating(
-                user_id=review['user_id'],
-                film_id=review['film_id'],
-            )
-            reactions = await self._get_review_rating(review_id=str(review['_id']))
-
-            review = {
-                **review,
-                'film_rating_by_user': film_rating_by_user,
-                "reactions": reactions,
-            }
-            all_data_reviews.append(review)
-
-        return [FilmReview.map_review_from_mongo(review) for review in all_data_reviews]
+        return [review async for review in reviews_cursor]
