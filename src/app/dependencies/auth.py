@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import APIKeyHeader
@@ -15,7 +14,7 @@ logger = logging.getLogger().getChild('auth')
 
 async def get_auth_data(
     auth_service: AuthServiceABC = Depends(),
-    access_token: Optional[str] = Security(api_key_header),
+    access_token: str | None = Security(api_key_header),
 ):
     if not access_token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

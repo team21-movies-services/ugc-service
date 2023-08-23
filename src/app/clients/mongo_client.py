@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -11,7 +10,7 @@ class AsyncMongoClient:
         self._mongo_client = mongo_client
         self._collection = self._mongo_client[mongo_config.database][mongo_config.collection]
 
-    def collection_find(self, action_type: str, film_id: Optional[UUID] = None, user_id: Optional[UUID] = None):
+    def collection_find(self, action_type: str, film_id: UUID | None = None, user_id: UUID | None = None):
         stmt = {"action_type": action_type}
         if film_id:
             stmt["film_id"] = str(film_id)

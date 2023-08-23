@@ -2,7 +2,9 @@ from abc import ABC, abstractmethod
 from typing import AsyncGenerator
 from uuid import UUID
 
-from clients.mongo_client import AsyncMongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from core.config import MongoConfig
 from schemas.request.user_actions import ActionType
 
 
@@ -14,9 +16,10 @@ class RatingRepositoryABC(ABC):
 
 
 class RatingMongoRepository(RatingRepositoryABC):
-    def __init__(self, async_mongo_client: AsyncMongoClient) -> None:
-        self._async_mongo_client = async_mongo_client
+    def __init__(self, client: AsyncIOMotorClient, config: MongoConfig):
+        self._client = client
+        self._collection = self._client[config.database][config.collection]
 
     async def get_film_rates(self, film_id: UUID) -> AsyncGenerator[int, None]:
-        rows = self._async_mongo_client.collection_find(action_type=ActionType.rating, film_id=film_id)
+        rows = self._collection.find({"action_type": ActionType.rating, "film_id": str(film_id)})
         return (row.get('action_data', {}).get('rate', 0) async for row in rows)
