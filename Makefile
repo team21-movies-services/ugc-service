@@ -15,6 +15,9 @@ create_network:
 	@docker network create ugc-service-network 2>/dev/null || echo "ugc-service-network is up-to-date"
 	@docker network create movies-elk-network 2>/dev/null || echo "movies-elk-network is up-to-date"
 
+create_test_network:
+	@docker network create test-ugc-service-network 2>/dev/null || echo "test-ugc-service-network is up-to-date"
+
 
 # prod start
 .PHONY: up
@@ -224,3 +227,29 @@ test-uninstall-mongo:
 
 
 # perfomance test end
+
+# test start
+.PHONY: up-test
+up-test: create_test_network ## up test services
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml up --build
+
+.PHONY: down-test
+down-test: ## down test services
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml down
+
+.PHONY: run-test
+run-test: create_test_network ## run and uninstall tests services
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml up --build --abort-on-container-exit
+
+.PHONY: build-test
+build-test: create_test_network
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml build --force-rm
+
+.PHONY: logs-test
+logs-test: ## logs test services
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml logs -f
+
+.PHONY: uninstall-test
+uninstall-test: ## uninstall test services
+	@docker-compose -p test_ugc_service -f docker-compose.test.yml down --remove-orphans --volumes
+# test end

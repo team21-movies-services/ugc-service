@@ -62,6 +62,13 @@ psycopg = {extras = ["binary"], version = "^3.1.10"}
 [tool.poetry.group.etl.dependencies]
 aiokafka = "^0.8.1"
 
+
+[tool.poetry.group.pytest.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.1"
+faker = "^19.3.0"
+httpx = "^0.24.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
