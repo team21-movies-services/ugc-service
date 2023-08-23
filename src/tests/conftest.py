@@ -7,6 +7,7 @@ pytest_plugins = (
     "functional.plugins.api_client",
     "functional.plugins.redis_client",
     "functional.plugins.auth_user",
+    "functional.testdata.user_actions",
 )
 
 
