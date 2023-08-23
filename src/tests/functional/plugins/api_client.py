@@ -11,7 +11,7 @@ from main import app
 
 
 @pytest_asyncio.fixture(name='mongo_client', scope='session')
-async def mongo_client_fixture(settings):
+async def mongo_client_fixture(settings: Settings):
     client = AsyncIOMotorClient(settings.mongo.dsn)
     yield client
 
