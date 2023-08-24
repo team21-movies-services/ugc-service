@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -21,7 +20,7 @@ logger = logging.getLogger().getChild('reviews-router')
 )
 async def get_film_reviews_by_id(
     film_id: UUID,
-    sort_by: Optional[str] = Query(None, description='Сортировка рецензий по дате или рейтингу'),
+    sort_by: str | None = Query(None, description='Сортировка рецензий по дате или рейтингу'),
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
 ) -> list[FilmReview]:
@@ -37,7 +36,7 @@ async def get_film_reviews_by_id(
     response_model=list[FilmReview],
 )
 async def get_film_reviews_by_user(
-    sort_by: Optional[str] = Query(None, description='Сортировка рецензий по дате или рейтингу'),
+    sort_by: str | None = Query(None, description='Сортировка рецензий по дате или рейтингу'),
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
 ) -> list[FilmReview]:

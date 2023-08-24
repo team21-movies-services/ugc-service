@@ -4,6 +4,7 @@ import pytest
 from functional.settings import get_settings
 
 pytest_plugins = (
+    "functional.testdata.faker_films",
     "functional.plugins.api_client",
     "functional.plugins.redis_client",
     "functional.plugins.auth_user",
