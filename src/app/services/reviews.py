@@ -16,11 +16,23 @@ class ReviewsServiseABC(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_reviews_by_film_id(self, film_id: UUID, sort_by: str | None) -> list[FilmReview]:
+    async def get_reviews_by_film_id(
+        self,
+        film_id: UUID,
+        sort_by: str | None,
+        page_size: int,
+        page_number: int,
+    ) -> list[FilmReview]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_reviews_by_user_id(self, user_id: UUID, sort_by: str | None) -> list[FilmReview]:
+    async def get_reviews_by_user_id(
+        self,
+        user_id: UUID,
+        sort_by: str | None,
+        page_size: int,
+        page_number: int,
+    ) -> list[FilmReview]:
         raise NotImplementedError
 
 
@@ -55,8 +67,18 @@ class ReviewsService(ReviewsServiseABC):
 
         return reviews
 
-    async def get_reviews_by_film_id(self, film_id: UUID, sort_by: str | None) -> list[FilmReview]:
-        reviews = await self._reviews_repository.get_all_reviews_by_film_id(film_id)
+    async def get_reviews_by_film_id(
+        self,
+        film_id: UUID,
+        sort_by: str | None,
+        page_size: int,
+        page_number: int,
+    ) -> list[FilmReview]:
+        reviews = await self._reviews_repository.get_all_reviews_by_film_id(
+            film_id,
+            page_size=page_size,
+            page_number=page_number,
+        )
 
         all_data_reviews = [
             FilmReview.map_review_from_mongo(review) for review in await self._get_all_data_reviews(reviews)
@@ -67,8 +89,18 @@ class ReviewsService(ReviewsServiseABC):
 
         return all_data_reviews
 
-    async def get_reviews_by_user_id(self, user_id: UUID, sort_by: str | None) -> list[FilmReview]:
-        reviews = await self._reviews_repository.get_all_reviews_by_user_id(user_id)
+    async def get_reviews_by_user_id(
+        self,
+        user_id: UUID,
+        sort_by: str | None,
+        page_size: int,
+        page_number: int,
+    ) -> list[FilmReview]:
+        reviews = await self._reviews_repository.get_all_reviews_by_user_id(
+            user_id=user_id,
+            page_size=page_size,
+            page_number=page_number,
+        )
 
         all_data_reviews = [
             FilmReview.map_review_from_mongo(review) for review in await self._get_all_data_reviews(reviews)

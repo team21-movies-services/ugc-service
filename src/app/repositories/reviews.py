@@ -11,7 +11,12 @@ from schemas.request.user_actions import ActionType
 
 class ReviewsRepositoryABC(ABC):
     @abstractmethod
-    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[Mapping[str, Any]]:
+    async def get_all_reviews_by_film_id(
+        self,
+        film_id: UUID,
+        page_size: int,
+        page_number: int,
+    ) -> list[Mapping[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod
@@ -25,7 +30,12 @@ class ReviewsRepositoryABC(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[Mapping[str, Any]]:
+    async def get_all_reviews_by_user_id(
+        self,
+        user_id: UUID,
+        page_size: int,
+        page_number: int,
+    ) -> list[Mapping[str, Any]]:
         raise NotImplementedError
 
 
@@ -71,14 +81,32 @@ class ReviewsMongoRepository(ReviewsRepositoryABC):
 
         return counters
 
-    async def get_all_reviews_by_film_id(self, film_id: UUID) -> list[Mapping[str, Any]]:
+    async def get_all_reviews_by_film_id(
+        self,
+        film_id: UUID,
+        page_size: int,
+        page_number: int,
+    ) -> list[Mapping[str, Any]]:
         collection = self._client[self._db][self._collection]
-        reviews_cursor = collection.find({"film_id": str(film_id), "action_type": ActionType.comment})
+        reviews_cursor = (
+            collection.find({"film_id": str(film_id), "action_type": ActionType.comment})
+            .limit(page_size)
+            .skip(page_size * page_number)
+        )
 
         return [review async for review in reviews_cursor]
 
-    async def get_all_reviews_by_user_id(self, user_id: UUID) -> list[Mapping[str, Any]]:
+    async def get_all_reviews_by_user_id(
+        self,
+        user_id: UUID,
+        page_size: int,
+        page_number: int,
+    ) -> list[Mapping[str, Any]]:
         collection = self._client[self._db][self._collection]
-        reviews_cursor = collection.find({"user_id": str(user_id), "action_type": ActionType.comment})
+        reviews_cursor = (
+            collection.find({"user_id": str(user_id), "action_type": ActionType.comment})
+            .limit(page_size)
+            .skip(page_size * page_number)
+        )
 
         return [review async for review in reviews_cursor]
