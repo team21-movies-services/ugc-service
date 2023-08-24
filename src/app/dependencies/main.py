@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable
 
 from fastapi import FastAPI
 
@@ -18,7 +18,7 @@ def _pretty_log(dependencies: dict, indent=0) -> tuple:
     return tuple(dependencies.keys())
 
 
-def setup_dependencies(app: FastAPI, mapper: Optional[Dict[Any, Callable]] = None):
+def setup_dependencies(app: FastAPI, mapper: dict[Any, Callable] | None = None):
     """Переопределение интерфейсов реальными экземплярами фабрик классов"""
     if mapper is None:
         mapper = dependencies_map
