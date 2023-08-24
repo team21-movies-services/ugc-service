@@ -17,7 +17,6 @@ class KafkaProvider(BaseProvider):
         """FastAPI startup event"""
 
         self.kafka_producer: AIOKafkaProducer = AIOKafkaProducer(bootstrap_servers=self.host, max_batch_size=163840)
-
         await self.kafka_producer.start()
 
         setattr(self.app.state, "kafka_producer", self.kafka_producer)

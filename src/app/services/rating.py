@@ -2,6 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from uuid import UUID
 
+from core.constants import FILM_RATING_DISLIKE, FILM_RATING_LIKE
 from repositories.rating import RatingRepositoryABC
 from schemas.domain.film import FilmRatingDomain
 
@@ -25,9 +26,9 @@ class RatingService(RatingServiceABC):
 
         rating_domain = FilmRatingDomain()
         async for rate in rates:
-            if rate == 10:
+            if rate == FILM_RATING_LIKE:
                 rating_domain.count_likes += 1
-            elif rate == 0:
+            elif rate == FILM_RATING_DISLIKE:
                 rating_domain.count_dislikes += 1
             rating_domain.total += 1
             rating_domain.summary += rate

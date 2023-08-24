@@ -13,14 +13,11 @@ class RedisProvider(BaseProvider):
         port: int,
     ):
         self.app = app
-        self.host = host
-        self.port = port
+        self.redis_client: Redis = Redis(host=host, port=port)
 
     async def startup(self):
         """FastAPI startup event"""
         # TODO: backoff
-
-        self.redis_client: Redis = Redis(host=self.host, port=self.port)
 
         if not await self.redis_client.ping():
             raise AppException()

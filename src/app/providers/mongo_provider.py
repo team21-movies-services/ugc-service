@@ -12,12 +12,11 @@ logger = logging.getLogger(__name__)
 class MongoProvider(BaseProvider):
     def __init__(self, app: FastAPI, dsn: str):
         super().__init__(app)
-        self.mongo_client: AsyncIOMotorClient | None = None
         self.dsn = dsn
+        self.mongo_client = AsyncIOMotorClient(self.dsn)
 
     async def startup(self):
         """FastAPI startup event"""
-        self.mongo_client = AsyncIOMotorClient(self.dsn)
 
         try:
             response = await self.mongo_client.admin.command({'ping': 1})
