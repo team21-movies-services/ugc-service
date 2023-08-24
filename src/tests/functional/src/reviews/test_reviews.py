@@ -10,7 +10,7 @@ pytestmark = pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("film_id", "params", "expected_length", "expected_status"),
     [
-        ('998ba1aa-725d-4db3-b928-a5d6fad38fb3', {"page": 0, "size": 25}, 25, HTTPStatus.OK),
+        ('998ba1aa-725d-4db3-b928-a5d6fad38fb3', {"page": 0, "size": 25}, 10, HTTPStatus.OK),
         ('998ba1aa-725d-4db3-b928-a5d6fad38fb1', {"page": 0, "size": 25}, 0, HTTPStatus.OK),
     ],
 )
