@@ -20,6 +20,8 @@ logger = logging.getLogger().getChild('reviews-router')
 )
 async def get_film_reviews_by_id(
     film_id: UUID,
+    page_size: int = Query(10, description="Количество элементов на странице", ge=1),
+    page_number: int = Query(0, description="Номер страницы", ge=0),
     sort_by: str | None = Query(None, description='Сортировка рецензий по дате или рейтингу'),
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
@@ -27,6 +29,8 @@ async def get_film_reviews_by_id(
     return await reviews_service.get_reviews_by_film_id(
         film_id=film_id,
         sort_by=sort_by,
+        page_size=page_size,
+        page_number=page_number,
     )
 
 
@@ -36,6 +40,8 @@ async def get_film_reviews_by_id(
     response_model=list[FilmReview],
 )
 async def get_film_reviews_by_user(
+    page_size: int = Query(10, description="Количество элементов на странице", ge=1),
+    page_number: int = Query(0, description="Номер страницы", ge=0),
     sort_by: str | None = Query(None, description='Сортировка рецензий по дате или рейтингу'),
     auth_data: AuthData = Depends(get_auth_data),
     reviews_service: ReviewsServiseABC = Depends(),
@@ -43,4 +49,6 @@ async def get_film_reviews_by_user(
     return await reviews_service.get_reviews_by_user_id(
         user_id=auth_data.user_id,
         sort_by=sort_by,
+        page_size=page_size,
+        page_number=page_number,
     )
